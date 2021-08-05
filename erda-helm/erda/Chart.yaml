@@ -72,4 +72,10 @@ dependencies:
     condition: redis.enabled
     tags:
       - master
-
+maintainers:
+  - name: Luobingli
+    email: luobily@gmail.com
+  - name: Wangzhuzhen
+    email: zhuzhenwang1984@gmail.com
+  - name: Liutianxiang
+    email: root@viper.run
