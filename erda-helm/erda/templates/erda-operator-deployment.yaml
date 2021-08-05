@@ -2,26 +2,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: {{ .Values.erda.operator.name | default "erda-operator" }}
-  name: {{ .Values.erda.operator.name | default "erda-operator" }}
+    app: erda-operator
+  name: erda-operator
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.erda.operator.name | default "erda-operator" }}
+      app: erda-operator
   strategy:
-    type: RollingUpdate
+    type: {{ .Values.global.updateStrategy.type | default "RollingUpdate" }}
   template:
     metadata:
       labels:
-        app: {{ .Values.erda.operator.name | default "erda-operator" }}
+        app: erda-operator
     spec:
-      serviceAccountName: {{ .Values.erda.operator.name | default "erda-operator" }}
+      serviceAccountName: erda-operator
       containers:
-      - image: {{ .Values.global.image.repository }}/{{ .Values.erda.operator.name | default "erda-operator" }}:{{ .Values.erda.operator.version }}
+      - image: {{ .Values.global.image.repository }}/erda-operator:{{ .Values.erda.operator.tag }}
         imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
-        name: {{ .Values.erda.operator.name | default "erda-operator" }}
+        name: erda-operator
         env:
         - name: ENABLE_AFFINITY
           value: disable
@@ -29,13 +29,10 @@ spec:
           value: dice-cluster-info
         - name: ERDA_ADDON_INFO
           value: dice-addons-info
+        {{- with .Values.erda.operator.resources }}
         resources:
-          limits:
-            cpu: 100m
-            memory: 128Mi
-          requests:
-            cpu: 10m
-            memory: 10Mi
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       restartPolicy: Always
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:

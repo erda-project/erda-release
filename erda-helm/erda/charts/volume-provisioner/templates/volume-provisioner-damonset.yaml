@@ -2,25 +2,25 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   labels:
-    app: volume-provisioner
-  name: {{ .Values.name | default "volume-provisioner" }}
+    app: erda-volume-provisioner
+  name: erda-volume-provisioner
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   selector:
     matchLabels:
-      app: volume-provisioner
+      app: erda-volume-provisioner
   updateStrategy:
-    type: RollingUpdate
+    type: {{ .Values.global.updateStrategy.type | default "RollingUpdate" }}
   template:
     metadata:
-      name: {{ .Values.name | default "volume-provisioner" }}
+      name: erda-volume-provisioner
       labels:
-        app: volume-provisioner
+        app: erda-volume-provisioner
     spec:
-      serviceAccountName: volume-provisioner
+      serviceAccountName: erda-volume-provisioner
       containers:
         - image:
-            {{ .Values.global.image.repository }}/{{ .Values.name | default "volume-provisioner" }}:{{ .Values.version }}
+            {{ .Values.global.image.repository }}/volume-provisioner:{{ .Values.tag }}
           env:
             - name: PROVISIONER_NAMESPACE
               valueFrom:
@@ -31,17 +31,14 @@ spec:
             - name: NET_PROVISIONER_NAME
               value: dice/netdata-volume
           imagePullPolicy: Always
-          name: volume-provisioner
+          name: erda-volume-provisioner
           volumeMounts:
             - name: host-dir
               mountPath: /hostfs
+          {{- with .Values.resources }}
           resources:
-            requests:
-              cpu: 10m
-              memory: 10Mi
-            limits:
-              cpu: 100m
-              memory: 256Mi
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       volumes:
         - name: host-dir
           hostPath:
@@ -52,5 +49,3 @@ spec:
       {{- end }}
       tolerations:
         - operator: Exists
-
-

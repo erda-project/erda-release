@@ -4,8 +4,12 @@ global:
   image:
     repository: registry.erda.cloud/erda
     imagePullPolicy: IfNotPresent
+  updateStrategy:
+    type: RollingUpdate
+
   # Use this set to assign a list of default pullSecrets
   imagePullSecrets: [ ]
+
 # TODO: storage class in global control or not
 #  storageClass:
 #    local: dice-local-volume
@@ -20,11 +24,15 @@ erda:
   domain:
   masterClusterDomain:
   operator:
-    name: erda-operator
-    version: 1.0.0-20210427-3d25066
+    tag: 1.0.0-20210427-3d25066
+    resources:
+      requests:
+        cpu: 10m
+        memory: 10Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   image:
-    repository: registry.erda.cloud/erda/
-    imagePullPolicy: IfNotPresent
     components:
       init: init-image:1.0.0-20210510-21a3c66
       erda: erda:1.0.0-20210510-d7dd555
@@ -50,21 +58,19 @@ erda:
       lb:
 
 volume-provisioner:
-  name: volume-provisioner
-  version: 1.0.0-20210416-1a3758f
+  tag: 1.0.0-20210416-1a3758f
   provisioner:
-    local: dice/local-volume
-    nfs: dice/netdata-volume
-  storageclass:
-    local: dice-local-volume
-    nfs: dice-nfs-volume
+    local:
+      hostpath: /data
+    nfs:
+      hostpath: /netdata
   resources:
     requests:
-      cpu:
-      memory:
+      cpu: 10m
+      memory: 10Mi
     limits:
-      cpu:
-      memory:
+      cpu: 100m
+      memory: 256Mi
 
 registry:
   name: addon-registry

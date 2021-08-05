@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Values.erda.operator.name | default "erda-operator" }}
+  name: erda-operator
 rules:
 - apiGroups:
   - dice.terminus.io
