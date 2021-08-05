@@ -6,16 +6,15 @@ global:
     imagePullPolicy: IfNotPresent
   imagePullSecrets: [ ]
 
-name: addon-sonar
-version: 8.4.2
+tag: 8.4.2
 token: LY9DepZ7iDUsyH8TFoDR85ok7y2nw1
 password: 78tE846484lQQFUwY51h0Yr96ZQ063
 # ingressHost: "sonar.${ERDA_GENERIC_DOMAIN}"
 ingressHost: "sonar.erda.io"
 resources:
   requests:
-    cpu:
-    memory:
+    cpu: 0.1
+    memory: 10Mi
   limits:
-    cpu:
-    memory:
+    cpu: 0.5
+    memory: 1Gi

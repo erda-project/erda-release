@@ -39,7 +39,7 @@ data:
   {{- if eq .Values.registry.networkMode "host" }}
   REGISTRY_ADDR: {{ .Values.registry.hostURL }}
   {{- else }}
-  REGISTRY_ADDR: {{ .Values.registry.name | default "addon-registry" }}.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:5000
+  REGISTRY_ADDR: erda-registry.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:5000
   {{- end }}
   {{- end }}
   {{- if .Values.sonar.custom.address }}
@@ -57,7 +57,7 @@ data:
   SONAR_PUBLIC_URL: {{ .Values.sonar.custom.address }}
   {{- end }}
   {{- else }}
-  SONAR_ADDR: {{ .Values.sonar.name | default "addon-sonar" }}.{{ .Values.global.namespace | default "erda-system"}}.svc.cluster.local:9000
+  SONAR_ADDR: erda-sonar.{{ .Values.global.namespace | default "erda-system"}}.svc.cluster.local:9000
   SONAR_ADMIN_PASSWORD: 78tE846484lQQFUwY51h0Yr96ZQ063
   SONAR_ADMIN_TOKEN: LY9DepZ7iDUsyH8TFoDR85ok7y2nw1
   SONAR_PUBLIC_URL: https://sonar-sys.{{ .Values.erda.domain }}

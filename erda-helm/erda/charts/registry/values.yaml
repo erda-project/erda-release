@@ -6,16 +6,15 @@ global:
     imagePullPolicy: IfNotPresent
   imagePullSecrets: [ ]
 
-name: addon-registry
-version: 2.7.1
+tag: 2.7.1
 resources:
   requests:
-    cpu:
-    memory:
+    cpu: 0.1
+    memory: 10Mi
   limits:
-    cpu:
-    memory:
-storageClass: dice-local-volume
+    cpu: 1
+    memory: 1Gi
+storageClass: dice-netdata-volume
 networkMode: ""
 hostURL: ""
 hostNode:

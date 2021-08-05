@@ -13,11 +13,11 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: kms
+      app.kubernetes.io/name: erda-kms
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: kms
+        app.kubernetes.io/name: erda-kms
     spec:
       tolerations:
         - operator: Exists
@@ -40,7 +40,7 @@ spec:
                     - key: app.kubernetes.io/name
                       operator: In
                       values:
-                        - kms
+                        - erda-kms
                 topologyKey: kubernetes.io/hostname
       {{- end }}
       {{- with .Values.global.imagePullSecrets }}
@@ -48,8 +48,8 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: kms
-          image: {{ .Values.global.image.repository }}/addon-kms:{{ .Values.version }}
+        - name: erda-kms
+          image: {{ .Values.global.image.repository }}/addon-kms:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           ports:
             - containerPort: 3082
@@ -59,13 +59,10 @@ spec:
                 configMapKeyRef:
                   key: ETCD_ENDPOINTS
                   name: dice-cluster-info
+          {{- with .Values.resources }}
           resources:
-            requests:
-              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
-              memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
-            limits:
-              cpu: {{ .Values.resources.limits.cpu |  default "0.5" | quote }}
-              memory: {{ .Values.resources.limits.memory | default "500Mi" | quote }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           livenessProbe:
             failureThreshold: 9
             initialDelaySeconds: 1

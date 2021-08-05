@@ -6,12 +6,12 @@ global:
     imagePullPolicy: IfNotPresent
   imagePullSecrets: [ ]
 
-version: 1.0.0-20200608-f11445f
+tag: 1.0.0-20200608-f11445f
 replicas:
 resources:
   requests:
-    cpu:
-    memory:
+    cpu: 0.1
+    memory: 10Mi
   limits:
-    cpu:
-    memory:
+    cpu: 0.5
+    memory: 512Mi

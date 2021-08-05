@@ -67,16 +67,15 @@ volume-provisioner:
       memory:
 
 registry:
-  name: addon-registry
-  version: 2.7.1
+  tag: 2.7.1
   resources:
     requests:
-      cpu:
-      memory:
+      cpu: 0.1
+      memory: 10Mi
     limits:
-      cpu:
-      memory:
-  storageClass: dice-local-volume
+      cpu: 1
+      memory: 1Gi
+  storageClass: dice-netdata-volume
   networkMode: ""
   hostURL: ""
   hostNode:
@@ -84,35 +83,32 @@ registry:
     address:
 
 sonar:
-  name: addon-sonar
-  version: 8.4.2
+  tag: 8.4.2
   token: LY9DepZ7iDUsyH8TFoDR85ok7y2nw1
   password: 78tE846484lQQFUwY51h0Yr96ZQ063
   ingressHost: "sonar.erda.io"
   resources:
     requests:
-      cpu:
-      memory:
+      cpu: 0.1
+      memory: 10Mi
     limits:
-      cpu:
-      memory:
+      cpu: 0.5
+      memory: 1Gi
   custom:
     address:
     adminPassword:
     adminToken:
 
 kms:
-  version: 1.0.0-20200608-f11445f
+  tag: 1.0.0-20200608-f11445f
   replicas: 1
   resources:
     requests:
-      cpu:
-      memory:
+      cpu: 0.1
+      memory: 10Mi
     limits:
-      cpu:
-      memory:
-  etcdEndpoints: https://erda-etcd.erda-system.svc.cluster.local:2379
-
+      cpu: 0.5
+      memory: 512Mi
 
 #nexus:
 #  defaultAddress: https://maven.aliyun.com/repository/public

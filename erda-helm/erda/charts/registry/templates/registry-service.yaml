@@ -1,15 +1,15 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.name | default "addon-registry" }}
+  name: erda-registry
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
-    - name: {{ .Values.name | default "addon-registry" }}-tcp-5000
+    - name: erda-registry-tcp-5000
       protocol: TCP
       port: 5000
-    - name: {{ .Values.name | default "addon-registry" }}-tcp-5050
+    - name: erda-registry-tcp-5050
       protocol: TCP
       port: 5050
   selector:
-    dice/addon: {{ .Values.name | default "addon-registry" }}
+    dice/addon: erda-registry

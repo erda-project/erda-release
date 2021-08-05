@@ -1,32 +1,38 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ .Values.name | default "addon-sonar" }}
+  name: erda-sonar
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      dice/addon: {{ .Values.name | default "addon-sonar" }}
+      dice/addon: erda-sonar
   template:
     metadata:
       labels:
-        dice/addon: {{ .Values.name | default "addon-sonar" }}
+        dice/addon: erda-sonar
     spec:
       containers:
-      - name: {{ .Values.name | default "addon-sonar" }}
-        image:  {{ .Values.global.image.repository }}/{{ .Values.name | default "addon-sonar" }}:{{ .Values.version }}
+      - name: erda-sonar
+        image:  {{ .Values.global.image.repository }}/addon-sonar:{{ .Values.tag }}
         imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
         ports:
         - containerPort: 9000
           protocol: TCP
         env:
         - name: SONAR_ADMIN_PASSWORD
-          value: {{ .Values.password }}
+          valueFrom:
+            configMapKeyRef:
+              key: SONAR_ADMIN_PASSWORD
+              name: erda-sonar
         - name: SONAR_ADMIN_TOKEN
-          value: {{ .Values.token }}
+          valueFrom:
+            configMapKeyRef:
+              key: SONAR_ADMIN_TOKEN
+              name: erda-sonar
         - name: DICE_ADDON
-          value: {{ .Values.name | default "addon-sonar" }}
+          value: erda-sonar
         - name: POD_IP
           valueFrom:
             fieldRef:
@@ -37,13 +43,10 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        {{- with .Values.resources }}
         resources:
-          requests:
-            cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
-            memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
-          limits:
-            cpu: {{ .Values.resources.limits.cpu |  default "1.5" | quote }}
-            memory: {{ .Values.resources.limits.memory | default "3Gi" | quote }}
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
         livenessProbe:
           tcpSocket:
             port: 9000
