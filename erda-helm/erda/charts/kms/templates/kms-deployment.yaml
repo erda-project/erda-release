@@ -49,7 +49,7 @@ spec:
       {{- end }}
       containers:
         - name: kms
-          image: {{ .Values.global.image.repository }}/addon-kms:{{ .Values.version }}
+          image: {{ .Values.global.image.repository }}/addon-kms:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           ports:
             - containerPort: 3082

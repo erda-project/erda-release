@@ -6,5 +6,5 @@ data:
     thread_pool.index.size: 3
 kind: ConfigMap
 metadata:
-  name: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}-config
+  name: erda-elasticsearch-config
   namespace: {{ .Values.global.namespace | default "erda-system" }}

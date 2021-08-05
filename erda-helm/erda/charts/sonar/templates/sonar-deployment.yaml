@@ -1,21 +1,21 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ .Values.name | default "addon-sonar" }}
+  name: erda-sonar
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      dice/addon: {{ .Values.name | default "addon-sonar" }}
+      dice/addon: erda-sonar
   template:
     metadata:
       labels:
-        dice/addon: {{ .Values.name | default "addon-sonar" }}
+        dice/addon: erda-sonar
     spec:
       containers:
-      - name: {{ .Values.name | default "addon-sonar" }}
-        image:  {{ .Values.global.image.repository }}/{{ .Values.name | default "addon-sonar" }}:{{ .Values.version }}
+      - name: erda-sonar
+        image:  {{ .Values.global.image.repository }}/addon-sonar:{{ .Values.tag }}
         imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
         ports:
         - containerPort: 9000
@@ -26,7 +26,7 @@ spec:
         - name: SONAR_ADMIN_TOKEN
           value: {{ .Values.token }}
         - name: DICE_ADDON
-          value: {{ .Values.name | default "addon-sonar" }}
+          value: erda-sonar
         - name: POD_IP
           valueFrom:
             fieldRef:

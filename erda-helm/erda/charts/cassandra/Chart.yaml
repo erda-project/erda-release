@@ -1,5 +1,15 @@
 apiVersion: v2
 name: cassandra
-description: A Helm chart for cassandra
+description: A Helm chart for deploy cassandra
 type: application
-version: 0.1.0
+version: 3.11.10
+keywords:
+  - cassandra
+  - operator
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Erda SRE Team
+

@@ -2,8 +2,8 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app:  {{ .Values.etcd.name | default "erda-etcd" }}
-  name:  {{ .Values.etcd.name | default "erda-etcd" }}
+    app:  erda-etcd
+  name:  erda-etcd
   namespace:  {{ .Values.global.namespace | default "erda-system" }}
 spec:
   backoffLimit: 0
@@ -12,18 +12,18 @@ spec:
   template:
     metadata:
       labels:
-        app:  {{ .Values.etcd.name | default "erda-etcd" }}
-        job-name:  {{ .Values.etcd.name | default "erda-etcd" }}
+        app:  erda-etcd
+        job-name:  erda-etcd
     spec:
       containers:
       - env:
         - name: ERDA_ETCD_NAME
-          value: {{ .Values.etcd.name | default "erda-etcd" }}
+          value: erda-etcd
         - name: ERDA_NAMESPACE
           value: {{ .Values.global.namespace | default "erda-system" }}
         - name: ERDA_SIZE
           value: {{ .Values.global.size | default "demo" }}
-        image: etcd_ssl_gen:v0.1.0
+        image: {{ .Values.global.image.repository}}/etcd_ssl_gen:v0.1.0
         imagePullPolicy: IfNotPresent
         name: k8s
         resources:
@@ -33,6 +33,5 @@ spec:
       dnsPolicy: ClusterFirst
       securityContext: {}
       restartPolicy: "Never"
-      nodeName: cn-hangzhou.172.16.0.1
-      serviceAccount: {{ .Values.etcd.name | default "erda-etcd" }}
-      serviceAccountName: {{ .Values.etcd.name | default "erda-etcd" }}
+      serviceAccount: erda-etcd
+      serviceAccountName: erda-etcd

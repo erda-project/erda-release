@@ -2,8 +2,8 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
-    app: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
-  name: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+    app: erda-cassandra-operator
+  name: erda-cassandra-operator
   namespace: {{ .Values.global.namespace | default "erda-system" }}
   annotations:
     "helm.sh/hook": pre-install
@@ -97,8 +97,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
-  name: cassandra-cluster-node
+    app: erda-cassandra-operator
+  name: erda-cassandra-cluster-node
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 rules:
   - apiGroups: [""]

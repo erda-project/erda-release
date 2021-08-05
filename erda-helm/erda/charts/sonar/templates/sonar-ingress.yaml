@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .Values.name | default "addon-sonar" }}
+  name: erda-sonar
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   rules:
@@ -9,5 +9,5 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: {{ .Values.name | default "addon-sonar" }}
+          serviceName: erda-sonar
           servicePort: 9000

@@ -2,4 +2,14 @@ apiVersion: v2
 name: volume-provisioner
 description: A Helm chart for volume-provisioner
 type: application
-version: 0.1.0
+version: 1.0.0-20210416-1a3758f
+keywords:
+  - volume-provisioner
+  - csi
+  - storageclass
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Erda SRE Team

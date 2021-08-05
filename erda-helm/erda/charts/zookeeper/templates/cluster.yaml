@@ -4,8 +4,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
+    app: erda-zookeeper-1
+  name: erda-zookeeper-1
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -13,12 +13,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
-  serviceName: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
+      app: erda-zookeeper-1
+  serviceName: erda-zookeeper-1
   template:
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
+        app: erda-zookeeper-1
     spec:
       tolerations:
         - operator: Exists
@@ -34,8 +34,8 @@ spec:
                 {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
-          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.zookeeper.version }}
+        - name: erda-zookeeper-1
+          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy  | default "IfNotPresent" }}
           ports:
           - containerPort: 2181
@@ -46,7 +46,7 @@ spec:
             protocol: TCP
           env:
           - name: DICE_PLATFORM_ADDON
-            value: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
+            value: erda-zookeeper-1
           - name: ZOO_AUTO_INTERVAL
             value: '2'
           - name: ZOO_AUTO_RETAINCOUNT
@@ -66,7 +66,7 @@ spec:
           - name: ZOO_PORT
             value: '2181'
           - name: ZOO_SERVERS
-            value: server.2={{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.3={{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.1=0.0.0.0:2888:3888
+            value: server.2=erda-zookeeper-2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.3=erda-zookeeper-3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.1=0.0.0.0:2888:3888
           - name: ZOO_SYNC_LIMIT
             value: '2'
           - name: ZOO_TICK_TIME
@@ -85,13 +85,13 @@ spec:
                 fieldPath: status.hostIP
           resources:
             requests:
-              cpu: {{ .Values.zookeeper.resources.requests.cpu | default "0.1" | quote }}
-              memory: {{ .Values.zookeeper.resources.requests.memory | default "10Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
             limits:
-              cpu: {{ .Values.zookeeper.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.zookeeper.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
           volumeMounts:
-          - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
+          - name: erda-zookeeper-1
             mountPath: /data
           livenessProbe:
             tcpSocket:
@@ -108,14 +108,14 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
-      name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
+        app: erda-zookeeper-1
+      name: erda-zookeeper-1
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: 32Gi
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
@@ -123,8 +123,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
+    app: erda-zookeeper-2
+  name: erda-zookeeper-2
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -132,12 +132,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
-  serviceName: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
+      app: erda-zookeeper-2
+  serviceName: erda-zookeeper-2
   template:
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
+        app: erda-zookeeper-2
     spec:
       tolerations:
         - operator: Exists
@@ -153,8 +153,8 @@ spec:
                 {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
-          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.zookeeper.version }}
+        - name: erda-zookeeper-2
+          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy  | default "IfNotPresent" }}
           ports:
           - containerPort: 2181
@@ -165,7 +165,7 @@ spec:
             protocol: TCP
           env:
           - name: DICE_PLATFORM_ADDON
-            value: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
+            value: erda-zookeeper-2
           - name: ZOO_AUTO_INTERVAL
             value: '2'
           - name: ZOO_AUTO_RETAINCOUNT
@@ -185,7 +185,7 @@ spec:
           - name: ZOO_PORT
             value: '2181'
           - name: ZOO_SERVERS
-            value: server.1={{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.3={{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.2=0.0.0.0:2888:3888
+            value: server.1=erda-zookeeper-1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.3=erda-zookeeper-3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.2=0.0.0.0:2888:3888
           - name: ZOO_SYNC_LIMIT
             value: '2'
           - name: ZOO_TICK_TIME
@@ -204,13 +204,13 @@ spec:
                 fieldPath: status.hostIP
           resources:
             requests:
-              cpu: {{ .Values.zookeeper.resources.requests.cpu | default "0.1" | quote }}
-              memory: {{ .Values.zookeeper.resources.requests.memory | default "10Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
             limits:
-              cpu: {{ .Values.zookeeper.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.zookeeper.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
           volumeMounts:
-          - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
+          - name: erda-zookeeper-2
             mountPath: /data
           livenessProbe:
             tcpSocket:
@@ -227,14 +227,14 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
-      name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
+        app: erda-zookeeper-2
+      name: erda-zookeeper-2
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: 32Gi
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
@@ -242,8 +242,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
+    app: erda-zookeeper-3
+  name: erda-zookeeper-3
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -251,12 +251,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
-  serviceName: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
+      app: erda-zookeeper-3
+  serviceName: erda-zookeeper-3
   template:
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
+        app: erda-zookeeper-3
     spec:
       tolerations:
         - operator: Exists
@@ -272,8 +272,8 @@ spec:
                 {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
-          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.zookeeper.version }}
+        - name: erda-zookeeper-3
+          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy  | default "IfNotPresent" }}
           ports:
           - containerPort: 2181
@@ -284,7 +284,7 @@ spec:
             protocol: TCP
           env:
           - name: DICE_PLATFORM_ADDON
-            value: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
+            value: erda-zookeeper-3
           - name: ZOO_AUTO_INTERVAL
             value: '2'
           - name: ZOO_AUTO_RETAINCOUNT
@@ -304,7 +304,7 @@ spec:
           - name: ZOO_PORT
             value: '2181'
           - name: ZOO_SERVERS
-            value: server.1={{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.2={{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.3=0.0.0.0:2888:3888
+            value: server.1=erda-zookeeper-1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.2=erda-zookeeper-2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2888:3888 server.3=0.0.0.0:2888:3888
           - name: ZOO_SYNC_LIMIT
             value: '2'
           - name: ZOO_TICK_TIME
@@ -323,13 +323,13 @@ spec:
                 fieldPath: status.hostIP
           resources:
             requests:
-              cpu: {{ .Values.zookeeper.resources.requests.cpu | default "0.1" | quote }}
-              memory: {{ .Values.zookeeper.resources.requests.memory | default "10Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
             limits:
-              cpu: {{ .Values.zookeeper.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.zookeeper.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
           volumeMounts:
-          - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
+          - name: erda-zookeeper-3
             mountPath: /data
           livenessProbe:
             tcpSocket:
@@ -346,71 +346,71 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
-      name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
+        app: erda-zookeeper-3
+      name: erda-zookeeper-3
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: 32Gi
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i1
+  name: erda-zookeeper-1
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i1-tcp-2181
+  - name: erda-zookeeper-1-tcp-2181
     protocol: TCP
     port: 2181
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i1-tcp-2888
+  - name: erda-zookeeper-1-tcp-2888
     protocol: TCP
     port: 2888
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i1-tcp-3888
+  - name: erda-zookeeper-1-tcp-3888
     protocol: TCP
     port: 3888
   selector:
-    app: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i1
+    app: erda-zookeeper-1
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i2
+  name: erda-zookeeper-2
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i2-tcp-2181
+  - name: erda-zookeeper-2-tcp-2181
     protocol: TCP
     port: 2181
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i2-tcp-2888
+  - name: erda-zookeeper-2-tcp-2888
     protocol: TCP
     port: 2888
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i2-tcp-3888
+  - name: erda-zookeeper-2-tcp-3888
     protocol: TCP
     port: 3888
   selector:
-    app: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i2
+    app: erda-zookeeper-2
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-i3
+  name: erda-zookeeper-3
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i3-tcp-2181
+  - name: erda-zookeeper-3-tcp-2181
     protocol: TCP
     port: 2181
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i3-tcp-2888
+  - name: erda-zookeeper-3-tcp-2888
     protocol: TCP
     port: 2888
-  - name: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i3-tcp-3888
+  - name: erda-zookeeper-3-tcp-3888
     protocol: TCP
     port: 3888
   selector:
-    app: {{ default "addon-zookeeper" .Values.zookeeper.name }}-i3
+    app: erda-zookeeper-3
 {{- end }}

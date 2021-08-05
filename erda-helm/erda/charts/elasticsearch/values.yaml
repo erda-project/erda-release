@@ -1,7 +1,7 @@
 # 全局可用参数
 global:
   # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
-  size: prod
+  size: demo
   # 组件部署的目标 namespace，如果不存在需要先创建
   namespace: default
   # 镜像参数
@@ -15,23 +15,21 @@ global:
   # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
   storageClassName:
 
-
-elasticsearch:
-  # elasticsearch 实例名称(高可用部署时则是实例名称前缀)
-  name: addon-elasticsearch
-  # 高可用部署时默认副本数量
-  replicas: 3
-  # elasticsearch 镜像 tag (版本)
-  version: 6.2.4
-  # 高可用部署时可作为 master 的节点的数量（设置为至少集群节点数量/2 + 1）
-  numberOfMasters: 2
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
+# elasticsearch 镜像 tag (版本)
+tag: 6.2.4
+# 高可用部署时默认副本数量
+replicas: 3
+# 高可用部署时可作为 master 的节点的数量（设置为至少集群节点数量/2 + 1）
+numberOfMasters: 2
+# elasticsearh 节点存储容量
+capacity: 1000Gi
+resources:
+  requests:
+    cpu: "4"
+    memory: "16Gi"
+  limits:
+    cpu: "6"
+    memory: "24Gi"
 
 #elasticsearchOperator:
 #  name: elasticsearch-operator

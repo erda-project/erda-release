@@ -2,4 +2,12 @@ apiVersion: v2
 name: mysql
 description: A Helm chart for mysql
 type: application
-version: 0.1.0
+version: 5.7.34
+keywords:
+  - mysql
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Erda SRE Team

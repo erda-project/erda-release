@@ -2,4 +2,12 @@ apiVersion: v2
 name: zookeeper
 description: A Helm chart for zookeeper
 type: application
-version: 0.1.0
+version: 3.4.13-monitor
+keywords:
+  - zookeeper
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Erda SRE Team

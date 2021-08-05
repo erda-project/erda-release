@@ -2,4 +2,12 @@ apiVersion: v2
 name: kms
 description: A Helm chart for kms
 type: application
-version: 0.1.0
+version: 1.0.0-20200608-f11445f
+keywords:
+  - kms
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Erda SRE Team

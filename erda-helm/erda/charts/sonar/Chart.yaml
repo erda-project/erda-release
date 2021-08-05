@@ -2,4 +2,12 @@ apiVersion: v2
 name: sonar
 description: A Helm chart for sonar
 type: application
-version: 0.1.0
+version: 8.4.2
+keywords:
+  - sonar
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Erda SRE Team

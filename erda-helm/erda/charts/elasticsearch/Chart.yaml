@@ -2,4 +2,12 @@ apiVersion: v2
 name: elasticsearch
 description: A Helm chart for elasticsearch
 type: application
-version: 0.1.0
+version: 6.2.4
+keywords:
+  - elasticsearch
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Erda SRE Team
