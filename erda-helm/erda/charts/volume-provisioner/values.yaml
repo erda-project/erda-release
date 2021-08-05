@@ -6,18 +6,16 @@ global:
     imagePullPolicy: IfNotPresent
   imagePullSecrets: [ ]
 
-name: volume-provisioner
-version: 1.0.0-20210416-1a3758f
+tag: 1.0.0-20210416-1a3758f
 provisioner:
-  local: dice/local-volume
-  nfs: dice/netdata-volume
-storageclass:
-  local: dice-local-volume
-  nfs: dice-nfs-volume
+  local:
+    hostpath: /data
+  nfs:
+    hostpath: /netdata
 resources:
   requests:
-    cpu:
-    memory:
+    cpu: 10m
+    memory: 10Mi
   limits:
-    cpu:
-    memory:
+    cpu: 100m
+    memory: 256Mi

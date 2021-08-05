@@ -1,17 +1,17 @@
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: {{ .Values.storageclass.local | default "erda-local-volume" }}
-provisioner: {{ .Values.provisioner.local | default "erda/local-volume" }}
+  name: erda-local-volume
+provisioner: erda/local-volume
 volumeBindingMode: WaitForFirstConsumer
 parameters:
-  hostpath: /data
+  hostpath: {{ .Values.provisioner.local.hostpath | default "/data" }}
 
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: {{ .Values.storageclass.nfs | default "erda-nfs-volume" }}
-provisioner: {{ .Values.provisioner.nfs | default "erda/netdata-volume" }}
+  name: erda-nfs-volume
+provisioner: erda/netdata-volume
 parameters:
-  hostpath: /netdata
+  hostpath: {{ .Values.provisioner.nfs.hostpath | default "/netdata" }}
