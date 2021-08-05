@@ -5,12 +5,9 @@ type: application
 version: 8.4.2
 keywords:
   - sonar
+#home: https://goharbor.io
+#icon: https://raw.githubusercontent.com/goharbor/website/master/static/img/logos/harbor-icon-color.png
 sources:
   - https://github.com/erda-project/erda-release
 maintainers:
-  - name: Luobingli
-    email: luobily@gmail.com
-  - name: Wangzhuzhen
-    email: zhuzhenwang1984@gmail.com
-  - name: Liutianxiang
-    email: root@viper.run
+  - name: Erda SRE Team

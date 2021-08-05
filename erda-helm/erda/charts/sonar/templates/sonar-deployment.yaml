@@ -22,15 +22,9 @@ spec:
           protocol: TCP
         env:
         - name: SONAR_ADMIN_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              key: SONAR_ADMIN_PASSWORD
-              name: erda-sonar
+          value: {{ .Values.password }}
         - name: SONAR_ADMIN_TOKEN
-          valueFrom:
-            configMapKeyRef:
-              key: SONAR_ADMIN_TOKEN
-              name: erda-sonar
+          value: {{ .Values.token }}
         - name: DICE_ADDON
           value: erda-sonar
         - name: POD_IP
@@ -43,10 +37,13 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        {{- with .Values.resources }}
         resources:
-          {{- toYaml . | nindent 12 }}
-        {{- end }}
+          requests:
+            cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
+            memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu |  default "1.5" | quote }}
+            memory: {{ .Values.resources.limits.memory | default "3Gi" | quote }}
         livenessProbe:
           tcpSocket:
             port: 9000

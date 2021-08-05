@@ -5,10 +5,10 @@ metadata:
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
-    - name: erda-registry-tcp-5000
+    - name: port-5000
       protocol: TCP
       port: 5000
-    - name: erda-registry-tcp-5050
+    - name: port-5050
       protocol: TCP
       port: 5050
   selector:

@@ -20,7 +20,7 @@ global:
 redisOperator:
   # registry 镜像 tag (版本)
   tag: 1.0.0-20200723-1a7a9f14
-  resources: 1
+  resources:
     requests:
       cpu: "10m"
       memory: "50Mi"
