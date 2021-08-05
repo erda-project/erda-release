@@ -50,8 +50,7 @@ erda:
       lb:
 
 volume-provisioner:
-  name: volume-provisioner
-  version: 1.0.0-20210416-1a3758f
+  tag: 1.0.0-20210416-1a3758f
   provisioner:
     local: dice/local-volume
     nfs: dice/netdata-volume
