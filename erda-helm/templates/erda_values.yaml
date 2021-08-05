@@ -1,5 +1,0 @@
-namespace: ${ERDA_NAMESPACE}
-
-domain: ${ERDA_GENERIC_DOMAIN}
-
-clusterName: ${ERDA_CLUSTER_NAME}

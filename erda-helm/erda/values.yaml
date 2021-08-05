@@ -23,8 +23,6 @@ erda:
     name: erda-operator
     version: 1.0.0-20210427-3d25066
   image:
-    repository: registry.erda.cloud/erda/
-    imagePullPolicy: IfNotPresent
     components:
       init: init-image:1.0.0-20210510-21a3c66
       erda: erda:1.0.0-20210510-d7dd555
