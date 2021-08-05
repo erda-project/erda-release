@@ -1,7 +1,7 @@
 # 全局可用参数
 global:
   # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
-  size: prod
+  size: demo
   # 组件部署的目标 namespace，如果不存在需要先创建
   namespace: default
   # 镜像参数
@@ -15,23 +15,18 @@ global:
   # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
   storageClassName:
 
-kafka:
-  # kafka 实例名称(高可用部署时则是实例名称前缀)
-  name: addon-kafka
-  # kafka 镜像 tag (版本)
-  version: 1.1.0-20210323-be01a9b
-  resources:
-    requests:
-      cpu:
-      memory:
-    limits:
-      cpu:
-      memory:
-  replicas: 1
-  java:
-    # 单个 kafka 实例设置的 Java heap 大小
-    heapmemory: "2048"
 
-zookeeper:
-  # kafka 实例连接的 zookeeper 实例名称(高可用部署时则是实例名称前缀)
-  name: addon-zookeeper
+# kafka 镜像 tag (版本)
+tag: 1.1.0-20210323-be01a9b
+# kafka 节点存储容量
+capacity: 100Gi
+resources:
+  requests:
+    cpu: "2"
+    memory: "8Gi"
+  limits:
+    cpu: "3"
+    memory: "12Gi"
+java:
+  # 单个 kafka 实例设置的 Java heap 大小(单位 Mb)
+  heapmemory: "2048"

@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
-  name: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+    dice/addon: erda-elasticsearch
+  name: erda-elasticsearch
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
@@ -12,7 +12,7 @@ spec:
     protocol: TCP
     targetPort: http
   selector:
-    dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+    dice/addon: erda-elasticsearch
   sessionAffinity: None
   type: ClusterIP
 ---
@@ -20,8 +20,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
-  name: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}-master
+    dice/addon: erda-elasticsearch
+  name: erda-elasticsearch-master
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
@@ -30,6 +30,6 @@ spec:
     protocol: TCP
     targetPort: transport
   selector:
-    dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+    dice/addon: erda-elasticsearch
   sessionAffinity: None
   type: ClusterIP

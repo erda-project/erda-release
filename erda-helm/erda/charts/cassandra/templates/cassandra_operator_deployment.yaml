@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+  name: erda-cassandra-operator
   namespace: {{ .Values.global.namespace | default "erda-system" }}
   labels:
-    app:  {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
-    operator: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+    app:  erda-cassandra-operator
+    operator: erda-cassandra-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name:  {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+      name:  erda-cassandra-operator
   strategy:
     rollingUpdate:
       maxUnavailable: 100%
@@ -18,9 +18,9 @@ spec:
   template:
     metadata:
       labels:
-        name:  {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
-        app:  {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
-        operator: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+        name: erda-cassandra-operator
+        app: erda-cassandra-operator
+        operator: erda-cassandra-operator
     spec:
       {{- if .Values.global.imagePullSecrets }}
       {{- with .Values.global.imagePullSecrets }}
@@ -28,14 +28,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- end }}
-      serviceAccountName:  {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+      serviceAccountName: erda-cassandra-operator
       securityContext:
         runAsUser: 1000
       tolerations:
         - operator: Exists
       containers:
-      - name:  {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
-        image: {{ .Values.global.image.repository }}/cassandra-operator:{{ .Values.cassandra.operatorVersion}}
+      - name:  erda-cassandra-operator
+        image: {{ .Values.global.image.repository }}/cassandra-operator:{{ .Values.operatorImageTag }}
         imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
         command:
         - casskop
@@ -49,7 +49,7 @@ spec:
         resources:
           requests:
             cpu: 10m
-            memory: 10Mi
+            memory: 50Mi
           limits:
             cpu: 1
             memory: 512Mi
@@ -63,6 +63,16 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: OPERATOR_NAME
-          value:  {{ .Values.cassandra.operatorName | default "cassandra-operator" | quote }}
+          value:  "erda-cassandra-operator"
         - name: LOG_LEVEL
           value: Debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP

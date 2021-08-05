@@ -2,37 +2,50 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: redis-operator
-  name: redis-operator
+    app: erda-redis-operator
+  name: erda-redis-operator
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis-operator
+      app: erda-redis-operator
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: redis-operator
+        app: erda-redis-operator
     spec:
       tolerations:
         - operator: Exists
+      serviceAccountName: erda-redis-operator
+      {{- if .Values.global.imagePullSecrets }}
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: redis-operator
+      {{- end }}
       containers:
-        - image: {{ .Values.global.image.repository }}/redis-pperator:{{ .Values.redisOperator.version }}
+        - image: {{ .Values.global.image.repository }}/redis-operator:{{ .Values.redisOperator.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           name: app
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
           resources:
-            limits:
-              cpu: 100m
-              memory: 50Mi
             requests:
-              cpu: 10m
-              memory: 10Mi
+              cpu: { { .Values.redisOperator.resources.requests.cpu | default "0.1" | quote } }
+              memory: { { .Values.redisOperator.resources.requests.memory | default "10Mi" | quote } }
+            limits:
+              cpu: { { .Values.redisOperator.resources.limits.cpu |  default "0.5" | quote } }
+              memory: { { .Values.redisOperator.resources.limits.memory | default "500Mi" | quote } }
       restartPolicy: Always

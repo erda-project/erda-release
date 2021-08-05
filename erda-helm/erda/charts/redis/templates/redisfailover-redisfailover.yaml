@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   sentinel:
-    image: {{ .Values.global.image.repository }}/addon-redis:{{ .Values.redisFailover.version }}
+    image: {{ .Values.global.image.repository }}/addon-redis:{{ .Values.redisFailover.tag }}
     {{- if eq .Values.global.size "prod" }}
     replicas: {{ .Values.redisFailover.sentinel.replicas | default 3 }}
     {{- else }}
@@ -35,7 +35,7 @@ spec:
     - "down-after-milliseconds 12000"
     - "failover-timeout 12000"
   redis:
-    image: {{ .Values.global.image.repository }}/addon-redis:{{ .Values.redisFailover.version }}
+    image: {{ .Values.global.image.repository }}/addon-redis:{{ .Values.redisFailover.tag }}
     {{- if eq .Values.global.size "prod" }}
     replicas: {{ .Values.redisFailover.redis.replicas | default 2 }}
     {{- else }}

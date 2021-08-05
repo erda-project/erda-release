@@ -1,7 +1,7 @@
 apiVersion: "db.orange.com/v1alpha1"
 kind: "CassandraCluster"
 metadata:
-  name: {{ .Values.cassandra.name | default "addon-cassandra" }}
+  name: erda-cassandra
   namespace: {{ .Values.global.namespace | default "erda-system" }}
   labels:
     cluster: k8s.kaas
@@ -9,9 +9,9 @@ spec:
   pod:
     tolerations:
       - operator: Exists
-  cassandraImage: {{ .Values.global.image.repository }}/addon-cassandra:{{ .Values.cassandra.version }}
+  cassandraImage: {{ .Values.global.image.repository }}/addon-cassandra:{{ .Values.cassandraImageTag}}
   bootstrapImage: registry.erda.cloud/erda/cassandra-bootstrap:0.1.8
-  configMapName: cassandra-configmap-v1
+  configMapName: erda-cassandra-configmap-v1
   imagepullpolicy: {{ .Values.global.image.imagePullPolicy }}
   {{- if .Values.global.imagePullSecrets }}
   {{- with .Values.global.imagePullSecrets }}
@@ -20,7 +20,11 @@ spec:
   {{- end }}
   {{- end }}
   dataStorageClass: {{ .Values.global.storageClassName | default "dice-local-volume" }}
-  dataCapacity: {{ .Values.cassandra.capacity | default "100Gi" }}
+  {{- if eq .Values.global.size "demo" }}
+  dataCapacity: "10Gi"
+  {{- else }}
+  dataCapacity: {{ .Values.capacity | default "300Gi" }}
+  {{- end }}
   hardAntiAffinity: false           # Do we ensure only 1 cassandra on each node ?
   deletePVC: true
   autoPilot: false
@@ -31,12 +35,21 @@ spec:
   backRestSidecar:
     image: registry.erda.cloud/erda/instaclustr-icarus:1.0.9
   resources:
+    {{- if eq .Values.global.size "demo" }}
     requests:
-      cpu: {{ .Values.cassandra.resources.requests.cpu | default "0.1" | quote }}
-      memory: {{ .Values.cassandra.resources.requests.memory | default "100Mi" }}
+      cpu: "0.5"
+      memory: "1Gi"
     limits:
-      cpu: {{ .Values.cassandra.resources.limits.cpu | default "1" | quote }}
-      memory: {{ .Values.cassandra.resources.limits.memory | default "2Gi" }}
+      cpu: "2"
+      memory: "4Gi"
+    {{- else }}
+    requests:
+      cpu: {{ .Values.resources.requests.cpu | default "6" | quote }}
+      memory: {{ .Values.resources.requests.memory | default "12Gi" }}
+    limits:
+      cpu: {{ .Values.resources.limits.cpu | default "12" | quote }}
+      memory: {{ .Values.resources.limits.memory | default "48Gi" }}
+    {{- end}}
   topology:
     dc:
     - name: dc1
@@ -45,7 +58,7 @@ spec:
       rack:
       - name: rack1
       {{- else }}
-      {{- with .Values.cassandra.rack }}
+      {{- with .Values.racks }}
       rack:
       {{- toYaml . | nindent 6 }}
       {{- end }}

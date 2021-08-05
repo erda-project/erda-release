@@ -1,17 +1,28 @@
+# 全局可用参数
 global:
-  namespace: default
+  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
   size: demo
+  # 组件部署的目标 namespace，如果不存在需要先创建
+  namespace: default
+  # 镜像参数
   image:
+    # 镜像仓库
     repository: registry.erda.cloud/erda
+    # 镜像拉取策略
     imagePullPolicy: IfNotPresent
+  # 镜像拉取 Secrets
   imagePullSecrets: [ ]
+  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
+  storageClassName:
 
+
+# kms 镜像 tag (版本)
 tag: 1.0.0-20200608-f11445f
 replicas:
 resources:
   requests:
-    cpu: 0.1
-    memory: 10Mi
+    cpu: "100m"
+    memory: "100Mi"
   limits:
-    cpu: 0.5
-    memory: 512Mi
+    cpu: "500m"
+    memory: "500Mi"

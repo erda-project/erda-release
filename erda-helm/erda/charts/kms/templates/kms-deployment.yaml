@@ -54,6 +54,16 @@ spec:
           ports:
             - containerPort: 3082
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
             - name: ETCD_ENDPOINTS
               valueFrom:
                 configMapKeyRef:

@@ -1,0 +1,31 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: erda-etcd
+  namespace:  {{ .Values.global.namespace | default "erda-system" }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "create", "delete", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: erda-etcd
+  namespace:  {{ .Values.global.namespace | default "erda-system" }}
+subjects:
+  - kind: ServiceAccount
+    name: erda-etcd
+    namespace: {{ .Values.global.namespace | default "erda-system" }}
+roleRef:
+  kind: Role
+  name: erda-etcd
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: erda-etcd
+  namespace: {{ .Values.global.namespace | default "erda-system" }}
+  labels:
+    app: erda-etcd

@@ -2,4 +2,17 @@ apiVersion: v2
 name: volume-provisioner
 description: A Helm chart for volume-provisioner
 type: application
-version: 0.1.0
+version: 1.0.0-20210416-1a3758f
+keywords:
+  - volume-provisioner
+  - csi
+  - storageclass
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Luobingli
+    email: luobily@gmail.com
+  - name: Wangzhuzhen
+    email: zhuzhenwang1984@gmail.com
+  - name: Liutianxiang
+    email: root@viper.run

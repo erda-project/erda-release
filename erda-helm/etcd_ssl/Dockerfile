@@ -1,6 +1,4 @@
-FROM debian
-#COPY ./etcd-client-secret.yaml /etcd-client-secret.yaml  
-#COPY ./etcd-server-secret.yaml /etcd-server-secret.yaml
+FROM debian:9.8
 RUN apt update && apt install  openssl  -y && apt install  gettext-base -y 
 RUN mkdir /opt/etcd_ssl
 WORKDIR /opt/etcd_ssl

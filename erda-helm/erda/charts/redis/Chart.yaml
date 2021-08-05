@@ -2,4 +2,15 @@ apiVersion: v2
 name: redis
 description: A Helm chart for redis
 type: application
-version: 0.1.0
+version: 2.7.1
+keywords:
+  - registry
+sources:
+  - https://github.com/erda-project/erda-release
+maintainers:
+  - name: Luobingli
+    email: luobily@gmail.com
+  - name: Wangzhuzhen
+    email: zhuzhenwang1984@gmail.com
+  - name: Liutianxiang
+    email: root@viper.run

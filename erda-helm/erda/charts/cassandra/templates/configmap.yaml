@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cassandra-configmap-v1
+  name: erda-cassandra-configmap-v1
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 data:
 

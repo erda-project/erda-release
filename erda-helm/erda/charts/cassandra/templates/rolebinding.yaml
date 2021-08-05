@@ -2,34 +2,34 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
-    app: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+    app: erda-cassandra-operator
   annotations:
     "helm.sh/hook": pre-install
-  name: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+  name: erda-cassandra-operator
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 subjects:
 - kind: ServiceAccount
-  name: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+  name: erda-cassandra-operator
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 roleRef:
   kind: Role
-  name: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+  name: erda-cassandra-operator
   apiGroup: rbac.authorization.k8s.io
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
-    app: {{ .Values.cassandra.operatorName | default "cassandra-operator" }}
+    app: erda-cassandra-operator
   annotations:
     "helm.sh/hook": pre-install
-  name: cassandra-cluster-node
+  name: erda-cassandra-cluster-node
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 subjects:
   - kind: ServiceAccount
-    name: cassandra-cluster-node
+    name: erda-cassandra-cluster-node
     namespace: {{ .Values.global.namespace | default "erda-system" }}
 roleRef:
   kind: Role
-  name: cassandra-cluster-node
+  name: erda-cassandra-cluster-node
   apiGroup: rbac.authorization.k8s.io

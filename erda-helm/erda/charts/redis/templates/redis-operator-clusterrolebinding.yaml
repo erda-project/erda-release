@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: redis-operator
+  name: erda-redis-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: redis-operator
+  name: erda-redis-operator
 subjects:
 - kind: ServiceAccount
-  name: redis-operator
+  name: erda-redis-operator
   namespace: {{ .Values.global.namespace | default "erda-system" }}

@@ -4,8 +4,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.kafka.name | default "addon-kafka" }}-i1
-  name: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+    app: erda-kafka-1
+  name: erda-kafka-1
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -13,12 +13,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.kafka.name | default "addon-kafka" }}-i1
-  serviceName: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+      app: erda-kafka-1
+  serviceName: erda-kafka-1
   template:
     metadata:
       labels:
-        app: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+        app: erda-kafka-1
     spec:
       tolerations:
         - operator: Exists
@@ -34,8 +34,8 @@ spec:
                 {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Values.kafka.name | default "addon-kafka" }}-i1
-          image: {{ .Values.global.image.repository }}/addon-kafka:{{ .Values.kafka.version }}
+        - name: erda-kafka-1
+          image: {{ .Values.global.image.repository }}/addon-kafka:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           ports:
           - containerPort: 9092
@@ -46,9 +46,9 @@ spec:
             protocol: TCP
           env:
           - name: DICE_PLATFORM_ADDON
-            value: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+            value: erda-kafka-1
           - name: KAFKA_ADVERTISED_HOST_NAME
-            value: {{ .Values.kafka.name | default "addon-kafka" }}-i1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local
+            value: erda-kafka-1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local
           - name: KAFKA_ADVERTISED_PORT
             value: '9092'
           - name: KAFKA_DEFAULT_REPLICATION_FACTOR
@@ -80,7 +80,7 @@ spec:
           - name: KAFKA_REPLICA_FETCH_MAX_BYTES
             value: '20000000'
           - name: KAFKA_ZOOKEEPER_CONNECT
-            value:  {{ .Values.zookeeper.name }}-i1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,{{ .Values.zookeeper.name }}-i2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,{{ .Values.zookeeper.name }}-i3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181
+            value:  erda-zookeeper-1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,erda-zookeeper-2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,erda-zookeeper-3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181
           - name: KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS
             value: '10000'
           - name: KAFKA_ZOOKEEPER_SESSION_TIMEOUT_MS
@@ -100,16 +100,16 @@ spec:
                 apiVersion: v1
                 fieldPath: status.hostIP
           - name: KAFKA_HEAP_OPTS
-            value: -Xmx{{ .Values.kafka.java.heapmemory }}m -Xms{{ .Values.kafka.java.heapmemory }}m
+            value: -Xmx{{ .Values.java.heapmemory }}m -Xms{{ .Values.java.heapmemory }}m
           resources:
             requests:
-              cpu: {{ .Values.kafka.resources.requests.cpu | default "0.5" | quote }}
-              memory: {{ .Values.kafka.resources.requests.memory | default "200Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "0.5" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "200Mi" | quote }}
             limits:
-              cpu: {{ .Values.kafka.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.kafka.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
           volumeMounts:
-          - name: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+          - name: erda-kafka-1
             mountPath: /data
           livenessProbe:
             tcpSocket:
@@ -126,14 +126,14 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.kafka.name | default "addon-kafka" }}-i1
-      name: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+        app: erda-kafka-1
+      name: erda-kafka-1
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: {{ .Values.capacity | default "100Gi" }}
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
@@ -141,8 +141,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.kafka.name | default "addon-kafka" }}-i2
-  name: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+    app: erda-kafka-2
+  name: erda-kafka-2
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -150,12 +150,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.kafka.name | default "addon-kafka" }}-i2
-  serviceName: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+      app: erda-kafka-2
+  serviceName: erda-kafka-2
   template:
     metadata:
       labels:
-        app: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+        app: erda-kafka-2
     spec:
       tolerations:
         - operator: Exists
@@ -171,8 +171,8 @@ spec:
                 {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Values.kafka.name | default "addon-kafka" }}-i2
-          image: {{ .Values.global.image.repository }}/addon-kafka:{{ .Values.kafka.version }}
+        - name: erda-kafka-2
+          image: {{ .Values.global.image.repository }}/addon-kafka:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           ports:
           - containerPort: 9092
@@ -183,9 +183,9 @@ spec:
             protocol: TCP
           env:
           - name: DICE_PLATFORM_ADDON
-            value: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+            value: erda-kafka-2
           - name: KAFKA_ADVERTISED_HOST_NAME
-            value: {{ .Values.kafka.name | default "addon-kafka" }}-i2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local
+            value: erda-kafka-2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local
           - name: KAFKA_ADVERTISED_PORT
             value: '9092'
           - name: KAFKA_DEFAULT_REPLICATION_FACTOR
@@ -217,7 +217,7 @@ spec:
           - name: KAFKA_REPLICA_FETCH_MAX_BYTES
             value: '20000000'
           - name: KAFKA_ZOOKEEPER_CONNECT
-            value:  {{ .Values.zookeeper.name }}-i1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,{{ .Values.zookeeper.name }}-i2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,{{ .Values.zookeeper.name }}-i3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181
+            value:  erda-zookeeper-1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,erda-zookeeper-2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,erda-zookeeper-3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181
           - name: KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS
             value: '10000'
           - name: KAFKA_ZOOKEEPER_SESSION_TIMEOUT_MS
@@ -237,16 +237,16 @@ spec:
                 apiVersion: v1
                 fieldPath: status.hostIP
           - name: KAFKA_HEAP_OPTS
-            value: -Xmx{{ .Values.kafka.java.heapmemory }}m -Xms{{ .Values.kafka.java.heapmemory }}m
+            value: -Xmx{{ .Values.java.heapmemory }}m -Xms{{ .Values.java.heapmemory }}m
           resources:
             requests:
-              cpu: {{ .Values.kafka.resources.requests.cpu | default "0.5" | quote }}
-              memory: {{ .Values.kafka.resources.requests.memory | default "200Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "0.5" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "200Mi" | quote }}
             limits:
-              cpu: {{ .Values.kafka.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.kafka.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
           volumeMounts:
-          - name: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+          - name: erda-kafka-2
             mountPath: /data
           livenessProbe:
             tcpSocket:
@@ -263,14 +263,14 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.kafka.name | default "addon-kafka" }}-i2
-      name: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+        app: erda-kafka-2
+      name: erda-kafka-2
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: {{ .Values.capacity | default "100Gi" }}
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
@@ -278,8 +278,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.kafka.name | default "addon-kafka" }}-i3
-  name: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+    app: erda-kafka-3
+  name: erda-kafka-3
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -287,12 +287,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.kafka.name | default "addon-kafka" }}-i3
-  serviceName: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+      app: erda-kafka-3
+  serviceName: erda-kafka-3
   template:
     metadata:
       labels:
-        app: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+        app: erda-kafka-3
     spec:
       tolerations:
         - operator: Exists
@@ -308,8 +308,8 @@ spec:
                 {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Values.kafka.name | default "addon-kafka" }}-i3
-          image: {{ .Values.global.image.repository }}/addon-kafka:{{ .Values.kafka.version }}
+        - name: erda-kafka-3
+          image: {{ .Values.global.image.repository }}/addon-kafka:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           ports:
           - containerPort: 9092
@@ -320,9 +320,9 @@ spec:
             protocol: TCP
           env:
           - name: DICE_PLATFORM_ADDON
-            value: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+            value: erda-kafka-3
           - name: KAFKA_ADVERTISED_HOST_NAME
-            value: {{ .Values.kafka.name | default "addon-kafka" }}-i3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local
+            value: erda-kafka-3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local
           - name: KAFKA_ADVERTISED_PORT
             value: '9092'
           - name: KAFKA_DEFAULT_REPLICATION_FACTOR
@@ -354,7 +354,7 @@ spec:
           - name: KAFKA_REPLICA_FETCH_MAX_BYTES
             value: '20000000'
           - name: KAFKA_ZOOKEEPER_CONNECT
-            value:  {{ .Values.zookeeper.name }}-i1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,{{ .Values.zookeeper.name }}-i2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,{{ .Values.zookeeper.name }}-i3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181
+            value:  erda-zookeeper-1.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,erda-zookeeper-2.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181,erda-zookeeper-3.{{ .Values.global.namespace | default "erda-system" }}.svc.cluster.local:2181
           - name: KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS
             value: '10000'
           - name: KAFKA_ZOOKEEPER_SESSION_TIMEOUT_MS
@@ -374,16 +374,16 @@ spec:
                 apiVersion: v1
                 fieldPath: status.hostIP
           - name: KAFKA_HEAP_OPTS
-            value: -Xmx{{ .Values.kafka.java.heapmemory }}m -Xms{{ .Values.kafka.java.heapmemory }}m
+            value: -Xmx{{ .Values.java.heapmemory }}m -Xms{{ .Values.java.heapmemory }}m
           resources:
             requests:
-              cpu: {{ .Values.kafka.resources.requests.cpu | default "0.5" | quote }}
-              memory: {{ .Values.kafka.resources.requests.memory | default "200Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "0.5" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "200Mi" | quote }}
             limits:
-              cpu: {{ .Values.kafka.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.kafka.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
           volumeMounts:
-          - name: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+          - name: erda-kafka-3
             mountPath: /data
           livenessProbe:
             tcpSocket:
@@ -400,71 +400,74 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.kafka.name | default "addon-kafka" }}-i3
-      name: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+        app: erda-kafka-3
+      name: erda-kafka-3
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: {{ .Values.capacity | default "100Gi" }}
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+  name: erda-kafka-1
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
+  clusterIP: None
   ports:
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-9092
+  - name: erda-kafka-tcp-9092
     protocol: TCP
     port: 9092
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-9988
+  - name: erda-kafka-tcp-9988
     protocol: TCP
     port: 9988
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-8778
+  - name: erda-kafka-tcp-8778
     protocol: TCP
     port: 8778
   selector:
-    app: {{ .Values.kafka.name | default "addon-kafka" }}-i1
+    app: erda-kafka-1
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+  name: erda-kafka-2
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
+  clusterIP: None
   ports:
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-9092
+  - name: erda-kafka-tcp-9092
     protocol: TCP
     port: 9092
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-9988
+  - name: erda-kafka-tcp-9988
     protocol: TCP
     port: 9988
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-8778
+  - name: erda-kafka-tcp-8778
     protocol: TCP
     port: 8778
   selector:
-    app: {{ .Values.kafka.name | default "addon-kafka" }}-i2
+    app: erda-kafka-2
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+  name: erda-kafka-3
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
+  clusterIP: None
   ports:
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-9092
+  - name: erda-kafka-tcp-9092
     protocol: TCP
     port: 9092
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-9988
+  - name: erda-kafka-tcp-9988
     protocol: TCP
     port: 9988
-  - name: {{ .Values.kafka.name | default "addon-kafka" }}-tcp-8778
+  - name: erda-kafka-tcp-8778
     protocol: TCP
     port: 8778
   selector:
-    app: {{ .Values.kafka.name | default "addon-kafka" }}-i3
+    app: erda-kafka-3
 {{- end }}

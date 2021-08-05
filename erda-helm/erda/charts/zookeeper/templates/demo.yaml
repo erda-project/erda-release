@@ -4,8 +4,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+    app: erda-zookeeper
+  name: erda-zookeeper
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -13,12 +13,12 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
-  serviceName: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+      app: erda-zookeeper
+  serviceName: erda-zookeeper
   template:
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+        app: erda-zookeeper
     spec:
       tolerations:
         - operator: Exists
@@ -34,8 +34,8 @@ spec:
                 {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
-          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.zookeeper.version }}
+        - name: erda-zookeeper
+          image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy  | default "IfNotPresent" }}
           ports:
           - containerPort: 2181
@@ -46,7 +46,7 @@ spec:
             protocol: TCP
           env:
           - name: DICE_PLATFORM_ADDON
-            value: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+            value: erda-zookeeper
           - name: ZOO_AUTO_INTERVAL
             value: '2'
           - name: ZOO_AUTO_RETAINCOUNT
@@ -83,13 +83,13 @@ spec:
                 fieldPath: status.hostIP
           resources:
             requests:
-              cpu: {{ .Values.zookeeper.resources.requests.cpu | default "0.1" | quote }}
-              memory: {{ .Values.zookeeper.resources.requests.memory | default "10Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
             limits:
-              cpu: {{ .Values.zookeeper.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.zookeeper.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
           volumeMounts:
-          - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+          - name: erda-zookeeper
             mountPath: /data
           livenessProbe:
             tcpSocket:
@@ -106,33 +106,33 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
-      name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+        app: erda-zookeeper
+      name: erda-zookeeper
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: {{ .Values.capacity | default "32Gi" }}
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+  name: erda-zookeeper
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   ports:
-  - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-tcp-2181
+  - name: erda-zookeeper-tcp-2181
     protocol: TCP
     port: 2181
-  - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-tcp-2888
+  - name: erda-zookeeper-tcp-2888
     protocol: TCP
     port: 2888
-  - name: {{ .Values.zookeeper.name | default "addon-zookeeper" }}-tcp-3888
+  - name: erda-zookeeper-tcp-3888
     protocol: TCP
     port: 3888
   selector:
-    app: {{ .Values.zookeeper.name | default "addon-zookeeper" }}
+    app: erda-zookeeper
 {{- end }}

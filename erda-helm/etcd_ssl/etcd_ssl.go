@@ -13,16 +13,6 @@ import (
 	"os/exec"
 	"sigs.k8s.io/yaml"
 	"time"
-
-	//
-	// Uncomment to load all auth plugins
-	// _ "k8s.io/client-go/plugin/pkg/client/auth"
-	//
-	// Or uncomment to load specific auth plugins
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/azure"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/openstack"
 )
 
 func main() {
@@ -47,7 +37,7 @@ func main() {
 }
 
 func createSecretsFile() error {
-	ctx, calcel := context.WithTimeout(context.Background(), 30 * time.Second)
+	ctx, calcel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer calcel()
 
 	cmd := exec.CommandContext(ctx, "./generate_ssl.sh")
@@ -88,8 +78,24 @@ func createEtcdSecretsByK8sClient(cli *kubernetes.Clientset, filename string) {
 
 	_, err = cli.CoreV1().Secrets(secret.Namespace).Get(context.TODO(), secret.Name, metav1.GetOptions{})
 	if err == nil {
-		fmt.Printf("Error creating etcd secrets: secret %s has existed in namespace %s \n", secret.Name, secret.Namespace)
-		panic("Error creating etcd secrets: secret %s has existed in namespace %s \n")
+		fmt.Printf("Secret %s has existed in namespace %s, will update it \n", secret.Name, secret.Namespace)
+		_, err = cli.CoreV1().Secrets(secret.Namespace).Update(context.TODO(), &secret, metav1.UpdateOptions{})
+		if err == nil {
+			fmt.Printf("Create secret %s in namespace %s by file %s successfully (by updating).\n", secret.Name, secret.Namespace, filename)
+		} else {
+			fmt.Printf("Secret %s has existed in namespace %s, updating it failed, will delete and re-create it.\n", secret.Name, secret.Namespace)
+			err = cli.CoreV1().Secrets(secret.Namespace).Delete(context.TODO(), secret.Name, metav1.DeleteOptions{})
+			if err != nil {
+				fmt.Printf("Secret %s has existed in namespace %s, Delete it failed： %v.\n", secret.Name, secret.Namespace, err)
+				panic(err.Error())
+			} else {
+				_, err = cli.CoreV1().Secrets(secret.Namespace).Create(context.TODO(), &secret, metav1.CreateOptions{})
+				if err != nil {
+					panic(err.Error())
+				}
+				fmt.Printf("Create secret %s in namespace %s by file %s successfully.\n", secret.Name, secret.Namespace, filename)
+			}
+		}
 	} else {
 		if errors.IsNotFound(err) {
 			_, err = cli.CoreV1().Secrets(secret.Namespace).Create(context.TODO(), &secret, metav1.CreateOptions{})
@@ -101,5 +107,4 @@ func createEtcdSecretsByK8sClient(cli *kubernetes.Clientset, filename string) {
 			panic(fmt.Errorf("Error creating etcd secrets: can not detect secret %s in namespace %s exist or not", secret.Name, secret.Namespace).Error())
 		}
 	}
-
 }

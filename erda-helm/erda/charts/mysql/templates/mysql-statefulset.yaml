@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: {{ .Values.mysql.name | default "erda-mysql" }}
-  name: {{ .Values.mysql.name | default "erda-mysql" }}
+    app: erda-mysql
+  name: erda-mysql
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
@@ -11,36 +11,46 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ .Values.mysql.name | default "erda-mysql" }}
-  serviceName: {{ .Values.mysql.name | default "erda-mysql" }}
+      app: erda-mysql
+  serviceName: erda-mysql
   template:
     metadata:
       labels:
-        app: {{ .Values.mysql.name | default "erda-mysql" }}
+        app: erda-mysql
     spec:
       tolerations:
         - operator: Exists
       containers:
-        - name: {{ .Values.mysql.name | default "erda-mysql" }}
-          image: {{ .Values.global.image.repository }}/erda-mysql:{{ .Values.mysql.version }}
+        - name: erda-mysql
+          image: {{ .Values.global.image.repository }}/erda-mysql:{{ .Values.tag }}
           imagePullPolicy: IfNotPresent
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
           - name: MYSQL_ROOT_PASSWORD
-            value: {{ .Values.mysql.password }}
+            value: {{ .Values.password }}
           - name: MYSQL_DATABASE
-            value: {{ .Values.mysql.database }}
+            value: {{ .Values.database }}
           resources:
             requests:
-              cpu: 10m
-              memory: 10Mi
+              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "100Mi" | quote }}
             limits:
-              cpu: 1
-              memory: 2Gi
+              cpu: {{ .Values.resources.limits.cpu |  default "2" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "2Gi" | quote }}
           ports:
           - containerPort: 3306
             name: mysql
           volumeMounts:
-          - name: {{ .Values.mysql.name | default "erda-mysql" }}
+          - name: erda-mysql
             mountPath: /data/mysql
           - name: mysql-initdb
             mountPath: /docker-entrypoint-initdb.d
@@ -55,13 +65,13 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: {{ .Values.mysql.name | default "erda-mysql" }}
-      name: {{ .Values.mysql.name | default "erda-mysql" }}
+        app: erda-mysql
+      name: erda-mysql
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: {{ .Values.capacity | default "100Gi" }}
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem

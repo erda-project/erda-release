@@ -2,59 +2,73 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
-  name: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+    dice/addon: erda-elasticsearch
+  name: erda-elasticsearch
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
   podManagementPolicy: OrderedReady
   {{- if eq .Values.global.size "demo" }}
   replicas: 1
   {{- else }}
-  replicas: {{ .Values.elasticsearch.replicas | default 3 }}
+  replicas: {{ .Values.replicas | default 3 }}
   {{- end }}
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+      dice/addon: erda-elasticsearch
   serviceName: elasticsearch
   template:
     metadata:
       labels:
-        dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+        dice/addon: erda-elasticsearch
     spec:
       tolerations:
         - operator: Exists
       containers:
         - env:
             - name: CLUSTER_NAME
-              value: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+              value: erda-elasticsearch
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
             - name: DISCOVERY_SERVICE
-              value: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}-master
+              value: erda-elasticsearch-master
             - name: SSL_ENABLE
               value: "false"
             - name: KEY_PASS
               valueFrom:
                 secretKeyRef:
                   key: key_pass
-                  name: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}-cert
+                  name: erda-elasticsearch-cert
             - name: NUMBER_OF_MASTERS
               {{- if eq .Values.global.size "demo" }}
               value: "1"
               {{- else }}
-              value: {{ .Values.elasticsearch.numberOfMasters | default "1" | quote }}
+              value: {{ .Values.numberOfMasters | default "1" | quote }}
               {{- end }}
             - name: MODE
               value: client
             - name: ES_JAVA_OPTS
+              {{- if eq .Values.global.size "demo" }}
+              value: -Xms1024m -Xmx1024m
+              {{- else }}
               value: -Xms4096m -Xmx4096m
+              {{- end }}
             - name: SEARCHGUARD_DISABLED
               value: "true"
-          image:  {{ .Values.global.image.repository }}/addon-elasticsearch:{{ .Values.elasticsearch.version }}
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
+          image:  {{ .Values.global.image.repository }}/addon-elasticsearch:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           livenessProbe:
             failureThreshold: 9
@@ -75,12 +89,21 @@ spec:
               name: http
               protocol: TCP
           resources:
+            {{- if eq .Values.global.size "demo" }}
             requests:
-              cpu: {{ .Values.elasticsearch.resources.requests.cpu | default "200m" | quote }}
-              memory: {{ .Values.elasticsearch.resources.requests.memory | default "819Mi" | quote }}
+              cpu: "500m"
+              memory: "512Mi"
             limits:
-              cpu: {{ .Values.elasticsearch.resources.limits.cpu |  default "2" | quote }}
-              memory: {{ .Values.elasticsearch.resources.limits.memory | default "8Gi" | quote }}
+              cpu: "2"
+              memory: "2048Mi"
+            {{- else }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | default "1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "4Gi" | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu |  default "2" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
+            {{- end }}
           securityContext:
             capabilities:
               add:
@@ -111,11 +134,11 @@ spec:
           name: init-sysctl
           resources:
             requests:
-              cpu: {{ .Values.elasticsearch.resources.requests.cpu | default "200m" | quote }}
-              memory: {{ .Values.elasticsearch.resources.requests.memory | default "819Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "200m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "819Mi" | quote }}
             limits:
-              cpu: {{ .Values.elasticsearch.resources.limits.cpu |  default "2" | quote }}
-              memory: {{ .Values.elasticsearch.resources.limits.memory | default "8Gi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "2" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "2Gi" | quote }}
           securityContext:
             privileged: true
           terminationMessagePath: /dev/termination-log
@@ -123,18 +146,18 @@ spec:
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
-      serviceAccount: addon-elasticsearch
-      serviceAccountName: addon-elasticsearch
+      serviceAccount: erda-elasticsearch
+      serviceAccountName: erda-elasticsearch
       terminationGracePeriodSeconds: 30
       volumes:
         - configMap:
             defaultMode: 420
-            name: addon-elasticsearch-config
+            name: erda-elasticsearch-config
           name: custom-config
         - name: sgconfig
           secret:
             defaultMode: 420
-            secretName: addon-elasticsearch-auth
+            secretName: erda-elasticsearch-auth
         - name: certs
           secret:
             defaultMode: 420
@@ -145,7 +168,7 @@ spec:
                 path: node.jks
               - key: sgadmin.jks
                 path: sgadmin.jks
-            secretName: addon-elasticsearch-cert
+            secretName: erda-elasticsearch-cert
         - emptyDir: {}
           name: temp
   updateStrategy:
@@ -157,13 +180,13 @@ spec:
       labels:
         app: elasticsearchcluster
         app.kubernetes.io/managed-by: Helm
-        dice/addon: {{ .Values.elasticsearch.name | default "addon-elasticsearch" }}
+        dice/addon: erda-elasticsearch
       name: data
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: {{ .Values.capacity | default "100Gi" }}
       storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
