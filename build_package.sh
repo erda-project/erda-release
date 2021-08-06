@@ -3,7 +3,6 @@ set -eo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-
 rm -rf package
 mkdir package
 
@@ -22,6 +21,7 @@ fi
 
 echo "${ERDA_VERSION}" > erda/VERSION
 
+# ERDA_OS_SYSTEM: Currently only supports linux.
 if [[ -z $ERDA_OS_SYSTEM ]]; then
     echo "ERDA_OS_SYSTEM is empty"
     exit
