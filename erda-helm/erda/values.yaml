@@ -1,5 +1,5 @@
 global:
-  namespace: default
+  namespace: erda-system
   size: demo
   image:
     repository: registry.erda.cloud/erda

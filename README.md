@@ -1,13 +1,15 @@
 # Erda Release Tools
 
-#### Release Package
+## Introduction
+This [Helm](https://github.com/kubernetes/helm) chart installs [Erda](https://github.com/erda-project/erda) in a Kubernetes cluster. Welcome to [contribute](CONTRIBUTING.md) to Helm Chart for Erda.
+
+## Release Package
 
 1. Git clone the repo on your machine
 
    ```shell
    git clone https://github.com/erda-project/erda-release.git
    ```
-
 
 2. Change directory to the erda-release folder
 
@@ -28,11 +30,35 @@
    export ERDA_OS_SYSTEM=
    ```
 
-
-
 4. Package the tarball
 
    ```shell
     bash scripts/build_package.sh
    ```
 
+## Installation
+Please refer to the following documentation to install Erda.
+
+- [English](https://github.com/erda-project/erda/blob/master/docs/guides/deploy/How-to-install-Erda.md)
+- [简体中文](https://github.com/erda-project/erda/blob/master/docs/guides/deploy/How-to-install-Erda-zh.md)
+
+## Uninstallation
+```shell
+helm uninstall <my-release>
+```
+
+## Configuration
+The following table lists the configurable parameters of the Erda chart and the default values.
+
+| Parameter                                                                   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Default                                                                             |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **global**                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
+| `global.namespace`                                                          | Specify the Kubernetes namespace to deploy Erda.                                                                                                                                                                                                                                                                                                                                                                                                                                               | `erda-system`                                                                       |
+| `global.size`                                                               | Configure Erda's deployment mode: `demo` or `prod`. In demo mode, single point deployment will be performed; In prod mode, high-availability deployment will be carried out.                                                                                                                                                                                                                                                                                                                   | `demo`                                                                              |
+| **tags**                                                                    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
+| **erda**                                                                    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
+| **volume-provisoner**                                                       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
+| **registry**                                                                |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
+| **sonar**                                                                   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
+| **kms**                                                                     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
+| **redis**                                                                   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                     |
