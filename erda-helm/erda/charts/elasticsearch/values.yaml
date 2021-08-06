@@ -30,7 +30,3 @@ resources:
   limits:
     cpu: "6"
     memory: "24Gi"
-
-#elasticsearchOperator:
-#  name: elasticsearch-operator
-#  version: 1.0.1

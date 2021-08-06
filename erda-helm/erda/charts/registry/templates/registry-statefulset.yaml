@@ -1,32 +1,36 @@
-kind: Deployment
 apiVersion: apps/v1
+kind: StatefulSet
 metadata:
+  labels:
+    dice/addon: erda-registry
   name: erda-registry
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 spec:
+  podManagementPolicy: OrderedReady
   replicas: 1
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       dice/addon: erda-registry
+  serviceName: erda-registry
   template:
     metadata:
       labels:
         dice/addon: erda-registry
     spec:
-      volumes:
-        - name: bind1
-          persistentVolumeClaim:
-            claimName: data-erda-registry-pvc
+      tolerations:
+        - operator: Exists
       containers:
         - name: erda-registry
-          image:
-            {{ .Values.global.image.repository }}/addon-registry:{{ .Values.tag }}
+          image: {{ .Values.global.image.repository }}/addon-registry:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           ports:
             - containerPort: 5000
               protocol: TCP
+              name: port-5000
             - containerPort: 5050
               protocol: TCP
+              name: port-5050
           env:
             - name: DICE_ADDON
               value: erda-registry
@@ -42,12 +46,15 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.hostIP
-          {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "1Gi" | quote }}
           volumeMounts:
-            - name: bind1
+            - name: erda-registry
               mountPath: /var/lib/registry
           livenessProbe:
             tcpSocket:
@@ -57,26 +64,20 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             failureThreshold: 9
-      {{- with .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-      {{- toYaml . | nindent 8 }}
-      {{- end }}
-
-      {{- if eq .Values.networkMode "host" }}
-      hostNetwork: true
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - {{ .Values.hostNode }}
-      {{- end }}
-      tolerations:
-        - operator: Exists
-  strategy:
-    rollingUpdate:
-      maxUnavailable: 50%
-      maxSurge: 100%
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        labels:
+          dice/addon: erda-registry
+        name: erda-registry
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.capacity | default "100Gi" }}
+        storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+        volumeMode: Filesystem

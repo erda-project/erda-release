@@ -1,11 +1,21 @@
+# 全局可用参数
 global:
+  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
   size: demo
+  # 组件部署的目标 namespace，如果不存在需要先创建
   namespace: default
+  # 镜像参数
   image:
+    # 镜像仓库
     repository: registry.erda.cloud/erda
+    # 镜像拉取策略
     imagePullPolicy: IfNotPresent
+  # 镜像拉取 Secrets
   imagePullSecrets: [ ]
+  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
+  storageClassName:
 
+# sonar 镜像 tag (版本)
 tag: 8.4.2
 token: LY9DepZ7iDUsyH8TFoDR85ok7y2nw1
 password: 78tE846484lQQFUwY51h0Yr96ZQ063
@@ -13,8 +23,8 @@ password: 78tE846484lQQFUwY51h0Yr96ZQ063
 ingressHost: "sonar.erda.io"
 resources:
   requests:
-    cpu: 0.1
-    memory: 10Mi
+    cpu: "750m"
+    memory: "1536Mi"
   limits:
-    cpu: 0.5
-    memory: 1Gi
+    cpu: "1500m"
+    memory: "3Gi"

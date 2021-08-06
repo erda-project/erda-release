@@ -89,4 +89,4 @@ spec:
       volumes:
         - name: etcd-client-secret
           secret:
-            secretName: etcd-client-secret
+            secretName: erda-etcd-client-secret

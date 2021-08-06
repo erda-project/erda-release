@@ -27,7 +27,7 @@ metadata:
   namespace: {{ .Values.global.namespace | default "erda-system" }}
 subjects:
   - kind: ServiceAccount
-    name: erda-cassandra-cluster-node
+    name: cassandra-cluster-node
     namespace: {{ .Values.global.namespace | default "erda-system" }}
 roleRef:
   kind: Role

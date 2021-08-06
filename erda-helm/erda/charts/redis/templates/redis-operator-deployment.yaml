@@ -43,9 +43,9 @@ spec:
                   fieldPath: status.hostIP
           resources:
             requests:
-              cpu: { { .Values.redisOperator.resources.requests.cpu | default "0.1" | quote } }
-              memory: { { .Values.redisOperator.resources.requests.memory | default "10Mi" | quote } }
+              cpu: {{ .Values.redisOperator.resources.requests.cpu | default "0.1" | quote }}
+              memory: {{ .Values.redisOperator.resources.requests.memory | default "10Mi" | quote }}
             limits:
-              cpu: { { .Values.redisOperator.resources.limits.cpu |  default "0.5" | quote } }
-              memory: { { .Values.redisOperator.resources.limits.memory | default "500Mi" | quote } }
+              cpu: {{ .Values.redisOperator.resources.limits.cpu | default "0.5" | quote }}
+              memory: {{ .Values.redisOperator.resources.limits.memory | default "500Mi" | quote }}
       restartPolicy: Always

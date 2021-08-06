@@ -25,16 +25,16 @@ spec:
           image: {{ .Values.global.image.repository }}/erda-mysql:{{ .Values.tag }}
           imagePullPolicy: IfNotPresent
           env:
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: status.podIP
-            - name: HOST_IP
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: status.hostIP
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
           - name: MYSQL_ROOT_PASSWORD
             value: {{ .Values.password }}
           - name: MYSQL_DATABASE

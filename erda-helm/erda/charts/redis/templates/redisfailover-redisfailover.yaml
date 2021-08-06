@@ -9,7 +9,7 @@ spec:
     {{- if eq .Values.global.size "prod" }}
     replicas: {{ .Values.redisFailover.sentinel.replicas | default 3 }}
     {{- else }}
-    replicas: {{ .Values.redisFailover.sentinel.replicas | default 1 }}
+    replicas: 1
     {{- end }}
     tolerations:
       - operator: Exists
@@ -39,7 +39,7 @@ spec:
     {{- if eq .Values.global.size "prod" }}
     replicas: {{ .Values.redisFailover.redis.replicas | default 2 }}
     {{- else }}
-    replicas: {{ .Values.redisFailover.redis.replicas | default 1 }}
+    replicas: 1
     {{- end }}
     tolerations:
       - operator: Exists

@@ -1,20 +1,31 @@
+# 全局可用参数
 global:
+  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
   size: demo
+  # 组件部署的目标 namespace，如果不存在需要先创建
   namespace: default
+  # 镜像参数
   image:
+    # 镜像仓库
     repository: registry.erda.cloud/erda
+    # 镜像拉取策略
     imagePullPolicy: IfNotPresent
+  # 镜像拉取 Secrets
   imagePullSecrets: [ ]
+  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
+  storageClassName:
 
+# registry 镜像 tag (版本)
 tag: 2.7.1
+# registry 节点存储容量
+capacity: 100Gi
 resources:
   requests:
-    cpu: 0.1
-    memory: 10Mi
+    cpu: "500m"
+    memory: "512Mi"
   limits:
-    cpu: 1
-    memory: 1Gi
-storageClass: dice-netdata-volume
+    cpu: "1"
+    memory: "1Gi"
 networkMode: ""
 hostURL: ""
 hostNode:
