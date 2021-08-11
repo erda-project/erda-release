@@ -100,14 +100,14 @@ spec:
                 apiVersion: v1
                 fieldPath: status.hostIP
           - name: KAFKA_HEAP_OPTS
-            value: -Xmx{{ .Values.java.heapmemory }}m -Xms{{ .Values.java.heapmemory }}m
+            value: {{ .Values.javaOpts | default "-Xmx6144m -Xms6144m" | quote  }}
           resources:
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "0.5" | quote }}
-              memory: {{ .Values.resources.requests.memory | default "200Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "2" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "4Gi" | quote }}
             limits:
-              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "4" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
           volumeMounts:
           - name: erda-kafka-1
             mountPath: /data
@@ -134,7 +134,7 @@ spec:
       resources:
         requests:
           storage: {{ .Values.capacity | default "100Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 apiVersion: apps/v1
@@ -237,14 +237,14 @@ spec:
                 apiVersion: v1
                 fieldPath: status.hostIP
           - name: KAFKA_HEAP_OPTS
-            value: -Xmx{{ .Values.java.heapmemory }}m -Xms{{ .Values.java.heapmemory }}m
+            value: {{ .Values.javaOpts | default "-Xmx6144m -Xms6144m" | quote  }}
           resources:
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "0.5" | quote }}
-              memory: {{ .Values.resources.requests.memory | default "200Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "2" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "4Gi" | quote }}
             limits:
-              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "4" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
           volumeMounts:
           - name: erda-kafka-2
             mountPath: /data
@@ -271,7 +271,7 @@ spec:
       resources:
         requests:
           storage: {{ .Values.capacity | default "100Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 apiVersion: apps/v1
@@ -374,14 +374,14 @@ spec:
                 apiVersion: v1
                 fieldPath: status.hostIP
           - name: KAFKA_HEAP_OPTS
-            value: -Xmx{{ .Values.java.heapmemory }}m -Xms{{ .Values.java.heapmemory }}m
+            value: {{ .Values.javaOpts | default "-Xmx6144m -Xms6144m" | quote  }}
           resources:
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "0.5" | quote }}
-              memory: {{ .Values.resources.requests.memory | default "200Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "2" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "4Gi" | quote }}
             limits:
-              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.resources.limits.memory | default "400Mi" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "4" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
           volumeMounts:
           - name: erda-kafka-3
             mountPath: /data
@@ -408,7 +408,7 @@ spec:
       resources:
         requests:
           storage: {{ .Values.capacity | default "100Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 kind: Service

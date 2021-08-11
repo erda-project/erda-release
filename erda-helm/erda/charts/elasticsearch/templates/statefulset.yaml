@@ -46,15 +46,15 @@ spec:
               {{- if eq .Values.global.size "demo" }}
               value: "1"
               {{- else }}
-              value: {{ .Values.numberOfMasters | default "1" | quote }}
+              value: {{ .Values.numberOfMasters | default "2" | quote }}
               {{- end }}
             - name: MODE
               value: client
             - name: ES_JAVA_OPTS
               {{- if eq .Values.global.size "demo" }}
-              value: -Xms1024m -Xmx1024m
+              value: {{ .Values.javaOpts | default "-Xms1024m -Xmx1024m" | quote }}
               {{- else }}
-              value: -Xms4096m -Xmx4096m
+              value: {{ .Values.javaOpts | default "-Xms6144m -Xmx6144m" | quote }}
               {{- end }}
             - name: SEARCHGUARD_DISABLED
               value: "true"
@@ -91,17 +91,17 @@ spec:
           resources:
             {{- if eq .Values.global.size "demo" }}
             requests:
-              cpu: "500m"
-              memory: "512Mi"
+              cpu: {{ .Values.resources.requests.cpu| default "100m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "512Mi" }}
             limits:
-              cpu: "2"
-              memory: "2048Mi"
+              cpu: {{ .Values.resources.limits.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "2048Mi" }}
             {{- else }}
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "1" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "2" | quote }}
               memory: {{ .Values.resources.requests.memory | default "4Gi" | quote }}
             limits:
-              cpu: {{ .Values.resources.limits.cpu |  default "2" | quote }}
+              cpu: {{ .Values.resources.limits.cpu |  default "4" | quote }}
               memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
             {{- end }}
           securityContext:
@@ -133,12 +133,21 @@ spec:
           imagePullPolicy: IfNotPresent
           name: init-sysctl
           resources:
+            {{- if eq .Values.global.size "demo" }}
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "200m" | quote }}
-              memory: {{ .Values.resources.requests.memory | default "819Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu | default "100m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "512Mi" }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "2048Mi" }}
+            {{- else }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | default "1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "4Gi" | quote }}
             limits:
               cpu: {{ .Values.resources.limits.cpu |  default "2" | quote }}
-              memory: {{ .Values.resources.limits.memory | default "2Gi" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
+            {{- end }}
           securityContext:
             privileged: true
           terminationMessagePath: /dev/termination-log
@@ -187,6 +196,10 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: {{ .Values.capacity | default "100Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+          {{- if eq .Values.global.size "demo" }}
+          storage: {{ .Values.capacity | default "50Gi" }}
+          {{- else }}
+          storage: {{ .Values.capacity | default "1000Gi" }}
+          {{- end }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem

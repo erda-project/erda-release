@@ -1,30 +1,31 @@
-# 全局可用参数
+# Global variable
 global:
-  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
+  # size defines deployment mode: 'demo' for minimal and 'prod' for product.
   size: demo
-  # 组件部署的目标 namespace，如果不存在需要先创建
+  # namespace defines which namespace will erda components deployed in Kubernetes.
   namespace: default
-  # 镜像参数
+  # image defines repository and image pull policy for docker image.
   image:
-    # 镜像仓库
+    # repository defines docker image repository.
     repository: registry.erda.cloud/erda
-    # 镜像拉取策略
+    # imagePullPolicy defines how to pull images.
     imagePullPolicy: IfNotPresent
-  # 镜像拉取 Secrets
+  # imagePullSecrets defines pull secrets for pulling image from private image repository.
   imagePullSecrets: [ ]
-  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
-  storageClassName:
 
-# sonar 镜像 tag (版本)
+# tag defines sonar image tag.
 tag: 8.4.2
+# token defines sonar admin token (base64 encoded)
 token: LY9DepZ7iDUsyH8TFoDR85ok7y2nw1
+# password defines sonar admin token (base64 encoded)
 password: 78tE846484lQQFUwY51h0Yr96ZQ063
 # ingressHost: "sonar.${ERDA_GENERIC_DOMAIN}"
 ingressHost: "sonar.erda.io"
+# resources defines resources requests and limits for pod
 resources:
   requests:
-    cpu: "750m"
-    memory: "1536Mi"
+    cpu:
+    memory:
   limits:
-    cpu: "1500m"
-    memory: "3Gi"
+    cpu:
+    memory:

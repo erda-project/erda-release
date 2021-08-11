@@ -47,5 +47,5 @@ spec:
               memory: {{ .Values.redisOperator.resources.requests.memory | default "10Mi" | quote }}
             limits:
               cpu: {{ .Values.redisOperator.resources.limits.cpu | default "0.5" | quote }}
-              memory: {{ .Values.redisOperator.resources.limits.memory | default "500Mi" | quote }}
+              memory: {{ .Values.redisOperator.resources.limits.memory | default "512Mi" | quote }}
       restartPolicy: Always

@@ -86,12 +86,12 @@ spec:
             name: server
             protocol: TCP
           resources:
-            limits:
-              cpu: "1"
-              memory: 2Gi
             requests:
-              cpu: 100m
-              memory: 1Gi
+              cpu: {{ .Values.resources.requests.cpu | default "1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "2Gi" | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu |  default "4" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
           volumeMounts:
           - name: etcd-server-secret
             mountPath: /etc/kubernetes/ssl/
@@ -101,7 +101,7 @@ spec:
       volumes:
         - name: etcd-server-secret
           secret:
-            secretName: etcd-server-secret
+            secretName: erda-etcd-server-secret
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -116,8 +116,8 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: {{ .Values.capacity | default "16Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+          storage: {{ .Values.capacity | default "32Gi" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 apiVersion: v1
@@ -206,12 +206,12 @@ spec:
             name: server
             protocol: TCP
           resources:
-            limits:
-              cpu: "1"
-              memory: 2Gi
             requests:
-              cpu: 100m
-              memory: 1Gi
+              cpu: {{ .Values.resources.requests.cpu | default "1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "2Gi" | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu |  default "4" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
           volumeMounts:
           - name: etcd-server-secret
             mountPath: /etc/kubernetes/ssl/
@@ -221,7 +221,7 @@ spec:
       volumes:
         - name: etcd-server-secret
           secret:
-            secretName: etcd-server-secret
+            secretName: erda-etcd-server-secret
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -236,8 +236,8 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: {{ .Values.capacity | default "16Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+          storage: {{ .Values.capacity | default "32i" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 apiVersion: v1
@@ -326,12 +326,12 @@ spec:
             name: server
             protocol: TCP
           resources:
-            limits:
-              cpu: "1"
-              memory: 2Gi
             requests:
-              cpu: 100m
-              memory: 1Gi
+              cpu: {{ .Values.resources.requests.cpu | default "1" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "2Gi" | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu |  default "4" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "8Gi" | quote }}
           volumeMounts:
           - name: etcd-server-secret
             mountPath: /etc/kubernetes/ssl/
@@ -341,7 +341,7 @@ spec:
       volumes:
         - name: etcd-server-secret
           secret:
-            secretName: etcd-server-secret
+            secretName: erda-etcd-server-secret
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -356,7 +356,7 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: {{ .Values.capacity | default "16Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+          storage: {{ .Values.capacity | default "32Gi" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 {{- end }}

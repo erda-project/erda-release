@@ -1,12 +1,15 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-succeeded
   labels:
     app:  erda-etcd
   name:  erda-etcd
   namespace:  {{ .Values.global.namespace | default "erda-system" }}
 spec:
-  backoffLimit: 0
+  backoffLimit: 3
   completions: 1
   parallelism: 1
   template:
@@ -23,13 +26,16 @@ spec:
           value: {{ .Values.global.namespace | default "erda-system" }}
         - name: ERDA_SIZE
           value: {{ .Values.global.size | default "demo" }}
-        image: {{ .Values.global.image.repository}}/etcd_ssl_gen:v0.1.0
-        imagePullPolicy: IfNotPresent
-        name: k8s
+        image: registry.cn-shanghai.aliyuncs.com/viper/etcd_ssl_gen:v0.2.0
+        imagePullPolicy: Always
+        name: etcd-ssl-generator
         resources:
           requests:
-            cpu: 10m
-            memory: 50Mi
+            cpu: "10m"
+            memory: "50Mi"
+          limits:
+            cpu: "500m"
+            memory: "50Mi"
       dnsPolicy: ClusterFirst
       securityContext: {}
       restartPolicy: "Never"

@@ -86,12 +86,12 @@ spec:
             name: server
             protocol: TCP
           resources:
-            limits:
-              cpu: "1"
-              memory: 1Gi
             requests:
-              cpu: 100m
-              memory: 1Gi
+              cpu: {{ .Values.resources.requests.cpu | default "100m" | quote }}
+              memory: {{ .Values.resources.requests.memory| default "512Mi" }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "2048Mi" }}
           volumeMounts:
           - name: etcd-server-secret
             mountPath: /etc/kubernetes/ssl/
@@ -101,7 +101,7 @@ spec:
       volumes:
         - name: etcd-server-secret
           secret:
-            secretName: etcd-server-secret
+            secretName: erda-etcd-server-secret
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -116,7 +116,7 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: {{ .Values.capacity | default "16Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+          storage: {{ .Values.capacity | default "8Gi" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 {{- end }}

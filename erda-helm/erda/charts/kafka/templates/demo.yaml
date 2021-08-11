@@ -90,7 +90,7 @@ spec:
           - name: KAFKA_JMX_OPTS
             value: '-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=9988 -javaagent:/opt/kafka/agent/jolokia-jvm-1.6.2-agent.jar=port=8778,host=0.0.0.0'
           - name: KAFKA_HEAP_OPTS
-            value: -Xmx512m -Xms512m
+            value: {{ .Values.javaOpts | default "-Xmx1024m -Xms1024m" | quote  }}
           - name: POD_IP
             valueFrom:
               fieldRef:
@@ -103,11 +103,11 @@ spec:
                 fieldPath: status.hostIP
           resources:
             requests:
-              cpu: 0.1
-              memory: 10Mi
+              cpu: {{ .Values.resources.requests.cpu | default "100m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "512Mi" }}
             limits:
-              cpu: 1
-              memory: 1024Mi
+              cpu: {{ .Values.resources.limits.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "2048Mi" }}
           volumeMounts:
           - name: erda-kafka
             mountPath: /data
@@ -133,8 +133,8 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: {{ .Values.capacity | default "100Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+          storage: {{ .Values.capacity | default "16Gi" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 kind: Service

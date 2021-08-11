@@ -1,34 +1,34 @@
-# 全局可用参数
+# Global variable
 global:
-  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
+  # size defines deployment mode: 'demo' for minimal and 'prod' for product.
   size: demo
-  # 组件部署的目标 namespace，如果不存在需要先创建
+  # namespace defines which namespace will erda components deployed in Kubernetes.
   namespace: default
-  # 镜像参数
+  # image defines repository and image pull policy for docker image.
   image:
-    # 镜像仓库
+    # repository defines docker image repository.
     repository: registry.erda.cloud/erda
-    # 镜像拉取策略
+    # imagePullPolicy defines how to pull images.
     imagePullPolicy: IfNotPresent
-  # 镜像拉取 Secrets
+  # imagePullSecrets defines pull secrets for pulling image from private image repository.
   imagePullSecrets: [ ]
-  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
-  storageClassName:
 
-# mysql 镜像 tag (版本)
+# tag defines mysql image tag.
 tag: 5.7.34
-# 数据库访问 用户名
+# user defines the username Erda used to access mysql.
 user: erda
-# 数据库访问 目标数据库
+# database defines the database name Erda used to access mysql.
 database: erda
-# 数据库访问 密码
+# password defines the password according to the username Erda used to access mysql.
 password: password
-# mysql 节点存储容量
-capacity: 100Gi
+# storageClassName defines which storageclass to use for creating PV in Kubernetes.
+storageClassName: "dice-local-volume"
+# capacity defines pvc capacity for myqsl instance  (default: 100Gi for prod mode and 10Gi for demo mode).
+capacity:
 resources:
   requests:
-    cpu: "100m"
-    memory: "100Mi"
+    cpu:
+    memory:
   limits:
-    cpu: "2"
-    memory: "2Gi"
+    cpu:
+    memory:

@@ -19,11 +19,11 @@ spec:
     {{- toYaml . | nindent 8 }}
   {{- end }}
   {{- end }}
-  dataStorageClass: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+  dataStorageClass: {{ .Values.storageClassName | default "dice-local-volume" }}
   {{- if eq .Values.global.size "demo" }}
-  dataCapacity: "10Gi"
+  dataCapacity: {{ .Values.capacity | default "50Gi" }}
   {{- else }}
-  dataCapacity: {{ .Values.capacity | default "300Gi" }}
+  dataCapacity: {{ .Values.capacity | default "1000Gi" }}
   {{- end }}
   hardAntiAffinity: false           # Do we ensure only 1 cassandra on each node ?
   deletePVC: true
@@ -37,18 +37,18 @@ spec:
   resources:
     {{- if eq .Values.global.size "demo" }}
     requests:
-      cpu: "0.5"
-      memory: "1Gi"
+      cpu: {{ .Values.resources.requests.cpu | default "100m" | quote }}
+      memory: {{ .Values.resources.requests.memory | default "512Mi" }}
     limits:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: {{ .Values.resources.limits.cpu | default "500m" | quote }}
+      memory: {{ .Values.resources.limits.memory | default "2048Mi" }}
     {{- else }}
     requests:
-      cpu: {{ .Values.resources.requests.cpu | default "6" | quote }}
-      memory: {{ .Values.resources.requests.memory | default "12Gi" }}
+      cpu: {{ .Values.resources.requests.cpu | default "2" | quote }}
+      memory: {{ .Values.resources.requests.memory | default "4Gi" }}
     limits:
-      cpu: {{ .Values.resources.limits.cpu | default "12" | quote }}
-      memory: {{ .Values.resources.limits.memory | default "48Gi" }}
+      cpu: {{ .Values.resources.limits.cpu | default "4" | quote }}
+      memory: {{ .Values.resources.limits.memory | default "16Gi" }}
     {{- end}}
   topology:
     dc:

@@ -40,12 +40,21 @@ spec:
           - name: MYSQL_DATABASE
             value: {{ .Values.database }}
           resources:
+            {{- if eq .Values.global.size "demo" }}
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
-              memory: {{ .Values.resources.requests.memory | default "100Mi" | quote }}
+              cpu: {{ .Values.resources.requests.cpu| default "100m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "256Mi" }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "1024Mi" }}
+            {{- else }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "500Mi" | quote }}
             limits:
               cpu: {{ .Values.resources.limits.cpu |  default "2" | quote }}
               memory: {{ .Values.resources.limits.memory | default "2Gi" | quote }}
+            {{- end }}
           ports:
           - containerPort: 3306
             name: mysql
@@ -72,6 +81,10 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
+          {{- if eq .Values.global.size "demo" }}
+          storage:  {{ .Values.capacity | default "10Gi" }}
+          {{- else }}
           storage: {{ .Values.capacity | default "100Gi" }}
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+          {{- end }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem

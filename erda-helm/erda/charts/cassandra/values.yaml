@@ -1,37 +1,40 @@
-# 全局可用参数
+# Global variable
 global:
-  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
+  # size defines deployment mode: 'demo' for minimal and 'prod' for product.
   size: demo
-  # 组件部署的目标 namespace，如果不存在需要先创建
+  # namespace defines which namespace will erda components deployed in Kubernetes.
   namespace: default
-  # 镜像参数
+  # image defines repository and image pull policy for docker image.
   image:
-    # 镜像仓库
+    # repository defines docker image repository.
     repository: registry.erda.cloud/erda
-    # 镜像拉取策略
+    # imagePullPolicy defines how to pull images.
     imagePullPolicy: IfNotPresent
-  # 镜像拉取 Secrets
+  # imagePullSecrets defines pull secrets for pulling image from private image repository.
   imagePullSecrets: [ ]
-  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
-  storageClassName:
 
 
-# cassandra-operator 镜像 tag (版本)
+# operatorImageTag defines cassandra-operator image tag.
 operatorImageTag: v1.1.3-release
-# addon-cassandra 镜像 tag (版本)
+# cassandraImageTag defines cassandra image tag
 cassandraImageTag: 3.11.10
-# cassandra 节点存储容量
-capacity: 1000Gi
+# capacity defines pvc capacity for cassandra instance (default: 1000Gi for prod mode and 50Gi for demo mode)
+capacity:
+# storageClassName defines which storageclass to use for creating PV in Kubernetes.
+storageClassName: "dice-local-volume"
 resources:
   requests:
-    cpu: "6"
-    memory: "24Gi"
+    # cpu defines cpu requests.
+    cpu:
+    # memory defines memory requests.
+    memory:
   limits:
-    cpu: "12"
-    memory: "48Gi"
-# 机架列表，cassandra 部署时按机架分布以提高高可用性
+    # cpu defines cpu limits.
+    cpu:
+    # memory defines memory limits.
+    memory:
 racks:
-  # 每个 rack 的名称, rack 的数量决定了高可用部署时 cassandra 实例的副本数量
+  # racks list
   - name: rack1
   - name: rack2
   - name: rack3

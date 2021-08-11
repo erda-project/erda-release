@@ -116,7 +116,7 @@ spec:
       resources:
         requests:
           storage: 32Gi
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 apiVersion: apps/v1
@@ -235,7 +235,7 @@ spec:
       resources:
         requests:
           storage: 32Gi
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 apiVersion: apps/v1
@@ -354,7 +354,7 @@ spec:
       resources:
         requests:
           storage: 32Gi
-      storageClassName: {{ .Values.global.storageClassName | default "dice-local-volume" }}
+      storageClassName: {{ .Values.storageClassName | default "dice-local-volume" }}
       volumeMode: Filesystem
 ---
 kind: Service

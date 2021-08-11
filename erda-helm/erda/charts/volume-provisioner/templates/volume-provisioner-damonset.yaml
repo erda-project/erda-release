@@ -47,11 +47,11 @@ spec:
               mountPath: /hostfs
           resources:
             requests:
-              cpu: 10m
-              memory: 10Mi
+              cpu: { { .Values.resources.requests.cpu | default "10m" | quote } }
+              memory: { { .Values.resources.requests.memory | default "10Mi" | quote } }
             limits:
-              cpu: 100m
-              memory: 256Mi
+              cpu: { { .Values.resources.limits.cpu |  default "100m" | quote } }
+              memory: { { .Values.resources.limits.memory | default "256Mi" | quote } }
       volumes:
         - name: host-dir
           hostPath:

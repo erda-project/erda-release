@@ -26,11 +26,11 @@ spec:
             {{- end }}
     resources:
       requests:
-        cpu: {{ .Values.redisFailover.sentinel.resources.requests.cpu | default "0.1" | quote }}
-        memory: {{ .Values.redisFailover.sentinel.resources.requests.memory | default "10Mi" | quote }}
+        cpu: {{ .Values.redisFailover.sentinel.resources.requests.cpu | default "50m" | quote }}
+        memory: {{ .Values.redisFailover.sentinel.resources.requests.memory | default "64Mi" | quote }}
       limits:
-        cpu: {{ .Values.redisFailover.sentinel.resources.requests.cpu | default ".2" | quote }}
-        memory: {{ .Values.redisFailover.sentinel.resources.limits.memory | default "64Mi" | quote }}
+        cpu: {{ .Values.redisFailover.sentinel.resources.requests.cpu | default "200m" | quote }}
+        memory: {{ .Values.redisFailover.sentinel.resources.limits.memory | default "256Mi" | quote }}
     customConfig:
     - "down-after-milliseconds 12000"
     - "failover-timeout 12000"
@@ -55,11 +55,20 @@ spec:
             {{- end }}
             {{- end }}
     resources:
+      {{- if eq .Values.global.size "demo" }}
       requests:
-        cpu: {{ .Values.redisFailover.redis.resources.requests.cpu | default "0.1" | quote }}
-        memory: {{ .Values.redisFailover.redis.resources.requests.memory | default "10Mi" | quote }}
+        cpu: {{ .Values.redisFailover.redis.resources.requests.cpu | default "100m" | quote }}
+        memory: {{ .Values.redisFailover.redis.resources.requests.memory | default "256Mi" | quote }}
       limits:
-        cpu: {{ .Values.redisFailover.redis.resources.requests.cpu | default ".3" | quote }}
-        memory: {{ .Values.redisFailover.redis.resources.limits.memory | default "512Mi" | quote }}
+        cpu: {{ .Values.redisFailover.redis.resources.limits.cpu |  default "200m" | quote }}
+        memory: {{ .Values.redisFailover.redis.resources.limits.memory | default "1024Mi" | quote }}
+      {{- else }}
+      requests:
+        cpu: {{ .Values.redisFailover.redis.resources.requests.cpu | default "150m" | quote }}
+        memory: {{ .Values.redisFailover.redis.resources.requests.memory | default "1Gi" | quote }}
+      limits:
+        cpu: {{ .Values.redisFailover.redis.resources.limits.cpu |  default "300m" | quote }}
+        memory: {{ .Values.redisFailover.redis.resources.limits.memory | default "2Gi" | quote }}
+      {{- end }}
   auth:
     secretPath: erda-redis-auth

@@ -69,10 +69,22 @@ spec:
                 configMapKeyRef:
                   key: ETCD_ENDPOINTS
                   name: dice-cluster-info
-          {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- if eq .Values.global.size "demo" }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | default "100m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "256Mi" }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "1024Mi" }}
+            {{- else }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | default "500m" | quote }}
+              memory: {{ .Values.resources.requests.memory | default "1Gi" | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
+              memory: {{ .Values.resources.limits.memory | default "2Gi" | quote }}
+            {{- end }}
           livenessProbe:
             failureThreshold: 9
             initialDelaySeconds: 1
@@ -89,4 +101,4 @@ spec:
       volumes:
         - name: etcd-client-secret
           secret:
-            secretName: etcd-client-secret
+            secretName: erda-etcd-client-secret

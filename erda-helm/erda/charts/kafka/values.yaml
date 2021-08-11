@@ -1,32 +1,32 @@
-# 全局可用参数
+# Global variable
 global:
-  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
+  # size defines deployment mode: 'demo' for minimal and 'prod' for product.
   size: demo
-  # 组件部署的目标 namespace，如果不存在需要先创建
+  # namespace defines which namespace will erda components deployed in Kubernetes.
   namespace: default
-  # 镜像参数
+  # image defines repository and image pull policy for docker image.
   image:
-    # 镜像仓库
+    # repository defines docker image repository.
     repository: registry.erda.cloud/erda
-    # 镜像拉取策略
+    # imagePullPolicy defines how to pull images.
     imagePullPolicy: IfNotPresent
-  # 镜像拉取 Secrets
+  # imagePullSecrets defines pull secrets for pulling image from private image repository.
   imagePullSecrets: [ ]
-  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
-  storageClassName:
 
-
-# kafka 镜像 tag (版本)
+# tag defines kafka image tag.
 tag: 1.1.0-20210323-be01a9b
-# kafka 节点存储容量
-capacity: 100Gi
+# storageClassName defines which storageclass to use for creating PV in Kubernetes.
+storageClassName: "dice-local-volume"
+# capacity defines pvc capacity for kafka instance (default: 100Gi for prod mode and 16Gi for demo mode).
+capacity:
+# kafka JAVA_OPTS (java heap size suggests to set as 0.75 * resources.limits.memory. eg: "-Xmx6144m -Xms6144m" for resources.limits.memory is 8192Mi)
+javaOpts:
+# resources defines resources requests and limits for pod
 resources:
   requests:
-    cpu: "2"
-    memory: "8Gi"
+    cpu:
+    memory:
   limits:
-    cpu: "3"
-    memory: "12Gi"
-java:
-  # 单个 kafka 实例设置的 Java heap 大小(单位 Mb)
-  heapmemory: "2048"
+    cpu:
+    memory:
+

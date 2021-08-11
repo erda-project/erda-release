@@ -1,32 +1,35 @@
-# 全局可用参数
+# Global variable
 global:
-  # 部署模式：支持最小化单点部署（demo） 和 高可用部署（prod） 两种模式
+  # size defines deployment mode: 'demo' for minimal and 'prod' for product.
   size: demo
-  # 组件部署的目标 namespace，如果不存在需要先创建
+  # namespace defines which namespace will erda components deployed in Kubernetes.
   namespace: default
-  # 镜像参数
+  # image defines repository and image pull policy for docker image.
   image:
-    # 镜像仓库
+    # repository defines docker image repository.
     repository: registry.erda.cloud/erda
-    # 镜像拉取策略
+    # imagePullPolicy defines how to pull images.
     imagePullPolicy: IfNotPresent
-  # 镜像拉取 Secrets
+  # imagePullSecrets defines pull secrets for pulling image from private image repository.
   imagePullSecrets: [ ]
-  # 部署组件中 StatefulSet 负载使用的存储的 StorageClass 对象的名称
-  storageClassName:
 
-# elasticsearch 镜像 tag (版本)
+# tag defines elasticsearch image tag.
 tag: 6.2.4
-# 高可用部署时默认副本数量
+# replicas defines the number of elasticsearch instances in 'prod' deployment mode
 replicas: 3
-# 高可用部署时可作为 master 的节点的数量（设置为至少集群节点数量/2 + 1）
+# numberOfMasters defines the number of elasticsearch instances can be as master candidates in 'prod' deployment mode（must more than half of replicas + 1）
 numberOfMasters: 2
-# elasticsearh 节点存储容量
-capacity: 1000Gi
+# # storageClassName defines which storageclass to use for creating PV in Kubernetes.
+storageClassName: "dice-local-volume"
+# capacity defines pvc capacity for elasticsearch instance  (default: 1000Gi for prod mode and 50Gi for demo mode).
+capacity:
+# elasticsearch JAVA_OPTS (java heap size suggests to set as 0.75 * resources.limits.memory, eg: "-Xms6144m -Xmx6144m" for resources.limits.memory is 8192Mi)
+javaOpts:
+# resources defines resources requests and limits for pod
 resources:
   requests:
-    cpu: "4"
-    memory: "16Gi"
+    cpu:
+    memory:
   limits:
-    cpu: "6"
-    memory: "24Gi"
+    cpu:
+    memory:
