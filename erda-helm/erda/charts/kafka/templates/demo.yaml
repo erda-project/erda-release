@@ -89,6 +89,8 @@ spec:
             value: '9988'
           - name: KAFKA_JMX_OPTS
             value: '-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=9988 -javaagent:/opt/kafka/agent/jolokia-jvm-1.6.2-agent.jar=port=8778,host=0.0.0.0'
+          - name: KAFKA_HEAP_OPTS
+            value: -Xmx512m -Xms512m
           - name: POD_IP
             valueFrom:
               fieldRef:
@@ -101,11 +103,11 @@ spec:
                 fieldPath: status.hostIP
           resources:
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "0.1" | quote }}
-              memory: {{ .Values.resources.requests.memory | default "10Mi" | quote }}
+              cpu: 0.1
+              memory: 10Mi
             limits:
-              cpu: {{ .Values.resources.limits.cpu |  default "1" | quote }}
-              memory: {{ .Values.resources.limits.memory | default "1024Mi" | quote }}
+              cpu: 1
+              memory: 1024Mi
           volumeMounts:
           - name: erda-kafka
             mountPath: /data
