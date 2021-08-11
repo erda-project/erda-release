@@ -11,6 +11,13 @@ rules:
   verbs:
   - '*'
 - apiGroups:
+  - erda.terminus.io
+  resources:
+  - erdas
+  - erdas/status
+  verbs:
+  - '*'
+- apiGroups:
   - flinkoperator.k8s.io
   resources:
   - flinkclusters
