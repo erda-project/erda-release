@@ -20,19 +20,6 @@ spec:
       labels:
         app: erda-kafka
     spec:
-      tolerations:
-        - operator: Exists
-      {{- if .Values.nodematchExpressions }}
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                {{- range $_, $value := .Values.nodematchExpressions }}
-                  - key: {{ $value.key }}
-                    operator: {{ $value.operator }}
-                {{- end }}
-      {{- end }}
       containers:
         - name: erda-kafka
           image: {{ .Values.global.image.repository }}/addon-kafka:{{ .Values.tag }}

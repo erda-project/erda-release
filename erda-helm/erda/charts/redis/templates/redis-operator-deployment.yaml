@@ -17,8 +17,15 @@ spec:
       labels:
         app: erda-redis-operator
     spec:
-      tolerations:
-        - operator: Exists
+      {{- if eq .Values.global.size "prod" }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "dice/platform"
+                operator: Exists
+      {{- end }}
       serviceAccountName: erda-redis-operator
       {{- if .Values.global.imagePullSecrets }}
       {{- with .Values.global.imagePullSecrets }}

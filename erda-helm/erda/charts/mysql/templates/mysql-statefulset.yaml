@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: erda-mysql
+    erda/addon: erda-mysql
   name: erda-mysql
   namespace: {{ .Release.Namespace }}
 spec:
@@ -17,9 +18,17 @@ spec:
     metadata:
       labels:
         app: erda-mysql
+        erda/addon: erda-mysql
     spec:
-      tolerations:
-        - operator: Exists
+      {{- if eq .Values.global.size "prod" }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "dice/platform"
+                  operator: Exists
+      {{- end }}
       containers:
         - name: erda-mysql
           image: {{ .Values.global.image.repository }}/erda-mysql:{{ .Values.tag }}

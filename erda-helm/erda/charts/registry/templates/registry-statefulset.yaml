@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   labels:
     dice/addon: erda-registry
+    erda/addon: erda-registry
   name: erda-registry
   namespace: {{ .Release.Namespace }}
 spec:
@@ -17,9 +18,8 @@ spec:
     metadata:
       labels:
         dice/addon: erda-registry
+        erda/addon: erda-registry
     spec:
-      tolerations:
-        - operator: Exists
       containers:
         - name: erda-registry
           image: {{ .Values.global.image.repository }}/addon-registry:{{ .Values.tag }}
@@ -83,6 +83,16 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values: [{{ .Values.custom.nodeName }}]
+      {{- else }}
+      {{- if eq .Values.global.size "prod" }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "dice/platform"
+                    operator: Exists
+      {{- end }}
       {{- end }}
   updateStrategy:
     type: RollingUpdate

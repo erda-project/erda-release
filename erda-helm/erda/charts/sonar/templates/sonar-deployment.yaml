@@ -3,6 +3,9 @@ apiVersion: apps/v1
 metadata:
   name: erda-sonar
   namespace: {{ .Release.Namespace }}
+  labels:
+    dice/addon: erda-sonar
+    erda/addon: erda-sonar
 spec:
   replicas: 1
   selector:
@@ -12,7 +15,17 @@ spec:
     metadata:
       labels:
         dice/addon: erda-sonar
+        erda/addon: erda-sonar
     spec:
+      {{- if eq .Values.global.size "prod" }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "dice/platform"
+                  operator: Exists
+      {{- end }}
       containers:
       - name: erda-sonar
         image:  {{ .Values.global.image.repository }}/addon-sonar:{{ .Values.tag }}
@@ -71,19 +84,6 @@ spec:
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.nodematchExpressions }}
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                {{- range $_, $value := .Values.nodematchExpressions }}
-                  - key: {{ $value.key }}
-                    operator: {{ $value.operator }}
-                {{- end }}
-      {{- end }}
-      tolerations:
-      - operator: Exists
   strategy:
     rollingUpdate:
       maxUnavailable: 50%

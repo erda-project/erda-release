@@ -17,6 +17,15 @@ spec:
       labels:
         app: erda-operator
     spec:
+      {{- if ne .Values.global.size "demo" }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "dice/platform"
+                  operator: Exists
+      {{- end }}
       serviceAccountName: erda-operator
       containers:
       - image: {{ .Values.global.image.repository }}/erda-operator:{{ .Values.erda.operator.tag }}
@@ -38,7 +47,11 @@ spec:
         - name:  INJECT_CLUSTER_INFO
           value: "false"
         - name: ENABLE_AFFINITY
+          {{- if ne .Values.global.size "demo" }}
+          value: "true"
+          {{- else }}
           value: "false"
+          {{- end }}
         - name: ERDA_CLUSTER_INFO
           value: dice-cluster-info
         - name: ERDA_ADDON_INFO
@@ -52,5 +65,3 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      tolerations:
-      - operator: Exists

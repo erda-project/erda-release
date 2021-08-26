@@ -24,6 +24,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: erda-etcd-0
+    erda/addon: erda-etcd
   name: erda-etcd-0
   namespace: {{ .Release.Namespace }}
 spec:
@@ -38,9 +39,26 @@ spec:
     metadata:
       labels:
         app: erda-etcd-0
+        erda/addon: erda-etcd
     spec:
-      tolerations:
-        - operator: Exists
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "dice/platform"
+                  operator: Exists
+                - key: "dice/etcd"
+                  operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: erda/addon
+                  operator: In
+                  values:
+                  - erda-etcd
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: erda-etcd-0
           image: {{ .Values.global.image.repository}}/erda-etcd:{{ .Values.tag }}
@@ -144,6 +162,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: erda-etcd-1
+    erda/addon: erda-etcd
   name: erda-etcd-1
   namespace: {{ .Release.Namespace }}
 spec:
@@ -158,9 +177,26 @@ spec:
     metadata:
       labels:
         app: erda-etcd-1
+        erda/addon: erda-etcd
     spec:
-      tolerations:
-        - operator: Exists
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "dice/platform"
+                  operator: Exists
+                - key: "dice/etcd"
+                  operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: erda/addon
+                  operator: In
+                  values:
+                  - erda-etcd
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: erda-etcd-1
           image: {{ .Values.global.image.repository}}/erda-etcd:{{ .Values.tag }}
@@ -264,6 +300,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: erda-etcd-2
+    erda/addon: erda-etcd
   name: erda-etcd-2
   namespace: {{ .Release.Namespace }}
 spec:
@@ -278,9 +315,26 @@ spec:
     metadata:
       labels:
         app: erda-etcd-2
+        erda/addon: erda-etcd
     spec:
-      tolerations:
-        - operator: Exists
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "dice/platform"
+                  operator: Exists
+                - key: "dice/etcd"
+                  operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: erda/addon
+                    operator: In
+                    values:
+                    - erda-etcd
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: erda-etcd-2
           image: {{ .Values.global.image.repository}}/erda-etcd:{{ .Values.tag }}

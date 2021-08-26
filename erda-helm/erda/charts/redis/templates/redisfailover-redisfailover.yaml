@@ -3,6 +3,8 @@ kind: RedisFailover
 metadata:
   name: erda-redis
   namespace: {{ .Release.Namespace }}
+  labels:
+    erda/addon: erda-redis
 spec:
   sentinel:
     image: {{ .Values.global.image.repository }}/addon-redis:{{ .Values.redisFailover.tag }}
@@ -11,19 +13,26 @@ spec:
     {{- else }}
     replicas: 1
     {{- end }}
-    tolerations:
-      - operator: Exists
     affinity:
+      {{- if eq .Values.global.size "prod" }}
       nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            {{- if .Values.nodematchExpressions }}
-            {{- range $_, $value := .Values.nodematchExpressions }}
-              - key: {{ $value.key }}
-                operator: {{ $value.operator }}
-            {{- end }}
-            {{- end }}
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+              - key: "dice/platform"
+                operator: Exists
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 90
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "app.kubernetes.io/component"
+                  operator: In
+                  values:
+                  - sentinel
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
     resources:
       requests:
         cpu: {{ .Values.redisFailover.sentinel.resources.requests.cpu | default "50m" | quote }}
@@ -41,19 +50,26 @@ spec:
     {{- else }}
     replicas: 1
     {{- end }}
-    tolerations:
-      - operator: Exists
     affinity:
+      {{- if eq .Values.global.size "prod" }}
       nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            {{- if .Values.nodematchExpressions }}
-            {{- range $_, $value := .Values.nodematchExpressions }}
-              - key: {{ $value.key }}
-                operator: {{ $value.operator }}
-            {{- end }}
-            {{- end }}
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+              - key: "dice/platform"
+                operator: Exists
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 90
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "app.kubernetes.io/component"
+                  operator: In
+                  values:
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
     resources:
       {{- if eq .Values.global.size "demo" }}
       requests:

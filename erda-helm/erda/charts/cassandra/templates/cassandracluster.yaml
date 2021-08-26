@@ -6,9 +6,6 @@ metadata:
   labels:
     cluster: k8s.kaas
 spec:
-  pod:
-    tolerations:
-      - operator: Exists
   cassandraImage: {{ .Values.global.image.repository }}/addon-cassandra:{{ .Values.cassandraImageTag}}
   bootstrapImage: registry.erda.cloud/erda/cassandra-bootstrap:0.1.8
   configMapName: erda-cassandra-configmap-v1
@@ -25,8 +22,8 @@ spec:
   {{- else }}
   dataCapacity: {{ .Values.capacity | default "1000Gi" }}
   {{- end }}
-  hardAntiAffinity: false           # Do we ensure only 1 cassandra on each node ?
-  deletePVC: true
+  hardAntiAffinity: true  # ensure only 1 cassandra on each node
+  deletePVC: false
   autoPilot: false
   gcStdout: true
   autoUpdateSeedList: false
@@ -58,6 +55,9 @@ spec:
       rack:
       - name: rack1
       {{- else }}
+      labels:
+        dice/cassandra: ""
+        dice/platform: ""
       {{- with .Values.racks }}
       rack:
       {{- toYaml . | nindent 6 }}

@@ -39,8 +39,6 @@ spec:
       labels:
         app: erda-etcd
     spec:
-      tolerations:
-        - operator: Exists
       containers:
         - name: erda-etcd
           image: {{ .Values.global.image.repository}}/erda-etcd:{{ .Values.tag }}

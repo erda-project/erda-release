@@ -1,10 +1,11 @@
-{{ if ne .Values.global.size "demo" }}
+{{- if ne .Values.global.size "demo" }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
     app: erda-zookeeper-1
+    erda/addon: erda-zookeeper
   name: erda-zookeeper-1
   namespace: {{ .Release.Namespace }}
 spec:
@@ -19,20 +20,26 @@ spec:
     metadata:
       labels:
         app: erda-zookeeper-1
+        erda/addon: erda-zookeeper
     spec:
-      tolerations:
-        - operator: Exists
-      {{- if .Values.nodematchExpressions }}
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                {{- range $_, $value := .Values.nodematchExpressions }}
-                  - key: {{ $value.key }}
-                    operator: {{ $value.operator }}
-                {{- end }}
-      {{- end }}
+                - key: "dice/zookeeper"
+                  operator: Exists
+                - key: "dice/platform"
+                  operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: erda/addon
+                  operator: In
+                  values:
+                  - erda-zookeeper
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: erda-zookeeper-1
           image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.tag }}
@@ -124,6 +131,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: erda-zookeeper-2
+    erda/addon: erda-zookeeper
   name: erda-zookeeper-2
   namespace: {{ .Release.Namespace }}
 spec:
@@ -138,20 +146,26 @@ spec:
     metadata:
       labels:
         app: erda-zookeeper-2
+        erda/addon: erda-zookeeper
     spec:
-      tolerations:
-        - operator: Exists
-      {{- if .Values.nodematchExpressions }}
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                {{- range $_, $value := .Values.nodematchExpressions }}
-                  - key: {{ $value.key }}
-                    operator: {{ $value.operator }}
-                {{- end }}
-      {{- end }}
+                - key: "dice/zookeeper"
+                  operator: Exists
+                - key: "dice/platform"
+                  operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: erda/addon
+                  operator: In
+                  values:
+                  - erda-zookeeper
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: erda-zookeeper-2
           image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.tag }}
@@ -243,6 +257,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: erda-zookeeper-3
+    erda/addon: erda-zookeeper
   name: erda-zookeeper-3
   namespace: {{ .Release.Namespace }}
 spec:
@@ -257,20 +272,26 @@ spec:
     metadata:
       labels:
         app: erda-zookeeper-3
+        erda/addon: erda-zookeeper
     spec:
-      tolerations:
-        - operator: Exists
-      {{- if .Values.nodematchExpressions }}
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                {{- range $_, $value := .Values.nodematchExpressions }}
-                  - key: {{ $value.key }}
-                    operator: {{ $value.operator }}
-                {{- end }}
-      {{- end }}
+                - key: "dice/zookeeper"
+                  operator: Exists
+                - key: "dice/platform"
+                  operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: erda/addon
+                  operator: In
+                  values:
+                  - erda-zookeeper
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: erda-zookeeper-3
           image: {{ .Values.global.image.repository }}/addon-zookeeper:{{ .Values.tag }}

@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: erda-kms
+    erda/addon: erda-kms
 spec:
   {{- if eq .Values.global.size "prod" }}
   replicas: {{ .Values.replicas | default 2 }}
@@ -18,31 +19,28 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: erda-kms
+        erda/addon: erda-kms
     spec:
-      tolerations:
-        - operator: Exists
-      {{- if .Values.nodematchExpressions }}
       affinity:
+        {{- if eq .Values.global.size "prod" }}
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                  {{- range $_, $value := .Values.nodematchExpressions }}
-                  - key: {{ $value.key }}
-                    operator: {{ $value.operator }}
+                - key: "dice/platform"
+                  operator: Exists
         {{- end }}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
+            - weight: 90
               podAffinityTerm:
                 labelSelector:
                   matchExpressions:
-                    - key: app.kubernetes.io/name
+                    - key: erda/addon
                       operator: In
                       values:
-                        - erda-kms
-                topologyKey: kubernetes.io/hostname
-      {{- end }}
+                      - erda-kms
+                topologyKey: "kubernetes.io/hostname"
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}

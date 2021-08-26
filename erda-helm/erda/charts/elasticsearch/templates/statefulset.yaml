@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   labels:
     dice/addon: erda-elasticsearch
+    erda/addon: erda-elasticsearch
   name: erda-elasticsearch
   namespace: {{ .Release.Namespace }}
 spec:
@@ -22,8 +23,26 @@ spec:
       labels:
         dice/addon: erda-elasticsearch
     spec:
-      tolerations:
-        - operator: Exists
+      affinity:
+        {{- if ne .Values.global.size "demo" }}
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "dice/platform"
+                operator: Exists
+              - key: "dice/elasticsearch"
+                operator: Exists
+        {{- end }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: erda/addon
+                operator: In
+                values:
+                - erda-elasticsearch
+            topologyKey: "kubernetes.io/hostname"
       containers:
         - env:
             - name: CLUSTER_NAME

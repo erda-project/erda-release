@@ -22,6 +22,15 @@ spec:
         app: erda-cassandra-operator
         operator: erda-cassandra-operator
     spec:
+      {{- if ne .Values.global.size "demo" }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "dice/platform"
+                  operator: Exists
+      {{- end }}
       {{- if .Values.global.imagePullSecrets }}
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -31,8 +40,6 @@ spec:
       serviceAccountName: erda-cassandra-operator
       securityContext:
         runAsUser: 1000
-      tolerations:
-        - operator: Exists
       containers:
       - name:  erda-cassandra-operator
         image: {{ .Values.global.image.repository }}/cassandra-operator:{{ .Values.operatorImageTag }}
@@ -51,7 +58,7 @@ spec:
             cpu: 10m
             memory: 50Mi
           limits:
-            cpu: 1
+            cpu: "1"
             memory: 512Mi
         env:
         - name: WATCH_NAMESPACE
