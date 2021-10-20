@@ -32,6 +32,12 @@ spec:
               protocol: TCP
               name: port-5050
           env:
+            - name: "REGISTRY_HTTP_ADDR"
+              value: "0.0.0.0:5000"
+            - name: "REGISTRY_HTTP_TLS_CERTIFICATE"
+              value: "/certs/domain.crt"
+            - name: "REGISTRY_HTTP_TLS_KEY"
+              value: "/certs/domain.key"
             - name: DICE_ADDON
               value: erda-registry
             - name: REGISTRY_STORAGE_DELETE_ENABLED
@@ -63,6 +69,9 @@ spec:
               memory: {{ .Values.resources.limits.memory | default "1Gi" | quote }}
             {{- end }}
           volumeMounts:
+            - name: certs
+              mountPath: /certs
+              readOnly: true
             - name: erda-registry
               mountPath: /var/lib/registry
           livenessProbe:
@@ -94,6 +103,10 @@ spec:
                     operator: Exists
       {{- end }}
       {{- end }}
+      volumes:
+      - name: certs
+        secret:
+          secretName: erda-registry-secret
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
