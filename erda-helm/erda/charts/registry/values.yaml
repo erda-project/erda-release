@@ -10,6 +10,8 @@ global:
     imagePullPolicy: IfNotPresent
   # imagePullSecrets defines pull secrets for pulling image from private image repository.
   imagePullSecrets: [ ]
+  kubernetes:
+    serviceDNSDomain: cluster.local
 
 
 # tag defines registry image tag.

@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    app:  erda-registry
+  name:  erda-registry
+  namespace:  {{ .Release.Namespace }}
+spec:
+  backoffLimit: 3
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        app:  erda-registry
+        job-name:  erda-registry
+    spec:
+      containers:
+        - env:
+            - name: ERDA_REGISTRY_NAME
+              value: erda-registry
+            - name: ERDA_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: KUBERNETES_SERVICE_DNS_DOMAIN
+              value: {{ .Values.global.kubernetes.serviceDNSDomain }}
+          image: {{ .Values.global.image.repository}}/registry_ssl_gen:20211020-f7463a1
+          imagePullPolicy: Always
+          name: registry-ssl-generator
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+            limits:
+              cpu: "500m"
+              memory: "50Mi"
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      restartPolicy: "Never"
+      serviceAccountName: erda-registry
