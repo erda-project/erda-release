@@ -45,6 +45,8 @@ spec:
               value: "false"
             - name: MIGRATION_SKIP_LINT
               value: "true"
+            - name: MIGRATION_SKIP_SANDBOX
+              value: "true"
           image:
             {{ .Values.global.image.repository }}/init-image:{{.Values.erda.tags.init}}
           imagePullPolicy: {{.Values.global.image.imagePullPolicy}}

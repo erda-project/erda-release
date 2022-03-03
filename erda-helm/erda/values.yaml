@@ -25,7 +25,7 @@ erda:
     protocol:
   # operator defines image tag and resources used for erda operator
   operator:
-    tag: 1.5
+    tag: "2.0"
     resources:
       requests:
         cpu: 10m
@@ -47,19 +47,19 @@ erda:
     clusterAccessKey:
   # tags defines image tag used for erda component
   tags:
-    init: 1.5.0-20220106
-    erda: 1.5-beta-20220106090210-aba3ce7
-    clusterAgent: 1.5-beta-20211222080112-2323101
+    init: 2.0.0-20220302
+    erda: 2.0-beta-20220303025901-9d783ae
+    clusterAgent: 2.0-beta-20220302094620-cbb8ecc
     uc: dice-1.1-20210630-f4d63b99
-    ui: 1.5-beta-20220106164004-372cbb4
+    ui: 2.0-beta-20220303105044-fa77942
 
-    telegraf: 1.5.0-beta-20211221095351-8da4c6d
-    fluentBit: 1.5-20211221-ec66ba0
+    telegraf: 2.0-beta-20220302175515-1065045
+    fluentBit: 2.0-beta-20220302175401-af2cafb
     analyzer:
-      alert: 1.5.0-beta-20211221094509-227d651
-      error: 1.5.0-beta-20211221094801-227d651
-      metrics: 1.5.0-beta-20211221095351-227d651
-      tracing: 1.5.0-beta-20211221094711-227d651
+      alert: 2.0.0-beta-20220301054202-7f22f8b
+      error: 2.0.0-beta-20220301054057-7f22f8b
+      metrics: 2.0.0-beta-20220301054057-7f22f8b
+      tracing: 2.0.0-beta-20220301054057-7f22f8b
   # component defines replicas and resources config used for erda component
   component:
     admin:
@@ -105,13 +105,6 @@ erda:
         max_cpu:
         max_mem:
     openapi:
-      replicas:
-      resources:
-        cpu:
-        mem:
-        max_cpu:
-        max_mem:
-    scheduler:
       replicas:
       resources:
         cpu:
@@ -247,6 +240,8 @@ erda:
         max_cpu:
         max_mem:
     fluentBit:
+      binds:
+        docker_root:
       resources:
         cpu:
         mem:

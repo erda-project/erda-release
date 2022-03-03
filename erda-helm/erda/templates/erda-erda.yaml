@@ -39,6 +39,7 @@ spec:
           {{- end }}
           MIGRATION_DEBUGSQL: "false"
           MIGRATION_SKIP_LINT: "true"
+          MIGRATION_SKIP_SANDBOX: "true"
         image:
           {{ .Values.global.image.repository }}/init-image:{{ .Values.erda.tags.init }}
         resources:
@@ -61,6 +62,7 @@ spec:
       OPENAPI_ADDR: openapi:9529
       CMP_ADDR: cmp:9027
       ORCHESTRATOR_ADDR: orchestrator:8081
+      DICEHUB_ADDR: dicehub:10000
       OTEL_TRACES_ENABLED: false
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://collector:7076/api/otlp/v1/traces
       OTEL_TRACES_SAMPLER_ARG: 0.1
@@ -264,6 +266,7 @@ spec:
             expose: false
             default: false
         envs:
+          GOLANG_PROTOBUF_REGISTRATION_CONFLICT: "ignore"
           COLLECTOR_BROWSER_SAMPLING_RATE: "100"
           COLLECTOR_ENABLE: "true"
         resources:
@@ -350,6 +353,9 @@ spec:
             l4_protocol: TCP
             expose: false
             default: false
+          - port: 7080
+            protocol: "TCP"
+            l4_protocol: "TCP"
         envs:
           EXTENSION_MENU: '{"流水线任务":["source_code_management:代码管理","build_management:构建管理","deploy_management:部署管理","version_management:版本管理","test_management:测试管理","data_management:数据治理","custom_task:自定义任务"],"扩展服务":["database:存储","distributed_cooperation:分布式协作","search:搜索","message:消息","content_management:内容管理","security:安全","traffic_load:流量负载","monitoring&logging:监控&日志","content:文本处理","image_processing:图像处理","document_processing:文件处理","sound_processing:音频处理","custom:自定义","general_ability:通用能力","new_retail:新零售能力","srm:采供能力","solution:解决方案"]}'
           RELEASE_GC_SWITCH: "true"
@@ -664,11 +670,12 @@ spec:
           DEBUG: "false"
           MSP_ADDR: msp:8080
           TENANT_GROUP_KEY: 58dcbf490ef3
+          ENABLE_SPECIFIED_K8S_NAMESPACE: {{ .Release.Namespace }}
         resources:
           cpu: {{ .Values.erda.component.orchestrator.resources.cpu | default "0.1" }}
-          mem: {{ .Values.erda.component.orchestrator.resources.mem | default "128" }}
+          mem: {{ .Values.erda.component.orchestrator.resources.mem | default "256" }}
           max_cpu: {{ .Values.erda.component.orchestrator.resources.max_cpu | default "1" }}
-          max_mem: {{ .Values.erda.component.orchestrator.resources.max_mem | default "256" }}
+          max_mem: {{ .Values.erda.component.orchestrator.resources.max_mem | default "2048" }}
           network:
             mode: container
         deployments:
@@ -718,47 +725,6 @@ spec:
             path: /ping
             duration: 120
           exec: { }
-      scheduler:
-        image:
-          {{ .Values.global.image.repository }}/erda:{{ .Values.erda.tags.erda }}
-        cmd: /app/scheduler
-        ports:
-          - port: 9091
-            protocol: TCP
-            l4_protocol: TCP
-            expose: false
-            default: false
-        envs:
-          ENABLE_SPECIFIED_K8S_NAMESPACE: {{ .Release.Namespace }}
-          CMDB_CONTAINER_TOPIC: spot-metaserver_container
-          CMDB_GROUP: spot_cmdb_group2
-          DEBUG: "false"
-        resources:
-          cpu: {{ .Values.erda.component.scheduler.resources.cpu | default "0.1" }}
-          mem: {{ .Values.erda.component.scheduler.resources.mem | default "128" }}
-          {{- if eq .Values.global.size "demo" }}
-          max_cpu: {{ .Values.erda.component.scheduler.resources.max_cpu | default "0.5" }}
-          max_mem: {{ .Values.erda.component.scheduler.resources.max_mem | default "512" }}
-          {{- else }}
-          max_cpu: {{ .Values.erda.component.scheduler.resources.max_cpu | default "1" }}
-          max_mem: {{ .Values.erda.component.scheduler.resources.max_mem | default "2048" }}
-          {{- end }}
-          network:
-            mode: container
-        deployments:
-          {{- if eq .Values.global.size "demo" }}
-          replicas: {{ .Values.erda.component.scheduler.replicas | default "1" }}
-          {{- else }}
-          replicas: {{ .Values.erda.component.scheduler.replicas | default "2" }}
-          {{- end }}
-          labels:
-            GROUP: dice
-        health_check:
-          http:
-            port: 9091
-            path: /info
-            duration: 120
-          exec: { }
       streaming:
         labels:
           cpu_bound: "true"
@@ -803,7 +769,7 @@ spec:
           cpu: {{ .Values.erda.component.streaming.resources.cpu | default "0.1" }}
           mem: {{ .Values.erda.component.streaming.resources.mem | default "128" }}
           max_cpu: {{ .Values.erda.component.streaming.resources.max_cpu | default "1.5" }}
-          max_mem: {{ .Values.erda.component.streaming.resources.max_mem | default "1024" }}
+          max_mem: {{ .Values.erda.component.streaming.resources.max_mem | default "2048" }}
           network:
             mode: container
         deployments:
@@ -908,13 +874,14 @@ spec:
             expose: true
             default: false
         envs:
+          ENABLE_APPLY_ORG: "true"
           COLLECTOR_ADDR: collector:7076
           COLLECTOR_PUBLIC_ADDR: collector:7076
           ENABLE_BIGDATA: "false"
           ENABLE_EDGE: "false"
           FDP_UI_ADDR: baidu.com
           GITTAR_ADDR: gittar:5566
-          KRATOS_ADDR: erda-kratos-public
+          KRATOS_ADDR: "kratos-public"
           OPENAPI_ADDR: openapi:9529
           SCHEDULER_ADDR: scheduler:9091
           FDP_UI_ADDR: fdp-ui:80
@@ -960,7 +927,7 @@ spec:
       ANALYZER_TRACING_ADDR: "analyzer-tracing:8081"
       CMDB_ADDR: cmdb:9093
       EVENTBOX_ADDR: eventbox:9528
-      FLINK_ENV_JAVA_OPTS_TM: -XX:+UseG1GC -XX:MaxMetaspaceSize=268435456
+      FLINK_ENV_JAVA_OPTS_TM: "-XX:+UseG1GC"
       HEARTBEAT_TIMEOUT: "60000"
       JOB_MANAGER_HEAP_SIZE: 700m
       MONITOR_ADDR: monitor:7096
@@ -1552,7 +1519,7 @@ spec:
           network:
             mode: container
         binds:
-          - /var/lib/docker/containers:/var/lib/docker/containers:ro
+          - {{ .Values.erda.component.fluentBit.binds.docker_root | default "/var/lib/docker" }}/containers:/var/lib/docker/containers:ro
           - /data/spot-v2/fluent-bit:/data/spot/fluent-bit:rw
           - /var/log:/var/log:ro
         deployments:
