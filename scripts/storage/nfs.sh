@@ -13,9 +13,9 @@ if [[ $ERDA_NETDATA_ENABLE == "enable" ]]; then
 	mkdir ./bin
 	os_name=`uname`
 	if [ ${os_name} == "Darwin" ];then
-		tar -xvf ../third_party_package/orgalorg_1.0.1_darwin_amd64.tar.gz -C bin/
+		tar -xvf ../../third_party_package/orgalorg_1.0.1_darwin_amd64.tar.gz -C bin/
 	elif [ ${os_name} == "Linux" ];then
-		tar -xvf ../third_party_package/orgalorg_1.0.1_linux_amd64.tar.gz -C bin/
+		tar -xvf ../../third_party_package/orgalorg_1.0.1_linux_amd64.tar.gz -C bin/
 	fi
 	
 	if [[ ! -e /netdata ]]; then
