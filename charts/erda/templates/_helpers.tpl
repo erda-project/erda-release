@@ -5,9 +5,9 @@ Erda registry address
 */}}
 {{- define "erda.registry.address" -}}
 {{- if .Values.registry.custom.nodeName -}}
-{{ printf "%s:5000" .Values.registry.custom.nodeIP | quote -}}
+{{ printf "%s:5000" .Values.registry.custom.nodeIP }}
 {{- else if .Values.registry.custom.address -}}
-{{ .Values.registry.custom.address | quote }}
+{{ .Values.registry.custom.address }}
 {{- else -}}
 {{ printf "erda-registry.%s.svc.cluster.local:5000" .Release.Namespace }}
 {{- end -}}
