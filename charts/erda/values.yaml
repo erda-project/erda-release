@@ -47,7 +47,7 @@ erda:
     clusterAccessKey:
   # tags defines image tag used for erda component
   tags:
-    init: 2.2-06291729
+    init: 2.2-07122112
     erda: 2.2-beta-20220627053742-b3761bb
     clusterAgent: 2.2-beta-20220627053606-b3761bb
     uc: dice-1.1-20210630-f4d63b99
